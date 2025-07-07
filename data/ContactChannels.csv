@@ -1,0 +1,3 @@
+id,type,label,value,icon,order,contactSectionId
+1,email,Email,contact@pinpon-creation.fr,,1,1
+2,tel,Téléphone,06 12 34 56 78,,2,1

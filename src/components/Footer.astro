@@ -1,0 +1,216 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components'
+import GoogleMaps from '@components/Elements/GoogleMaps.astro';
+
+
+// --- SiteSettings Type and Fallback ---
+type SiteSettings = {
+  siteTitle: string;
+  siteDescription: string;
+  logoUrl: string;
+  logoAlt: string;
+  imageMaps?: string;
+  googleMaps?: string;
+  googleMapsTitle?: string;
+  footerText?: string;
+};
+
+const siteSettingsFallback: SiteSettings = {
+  siteTitle: 'Pinpon Création',
+  siteDescription: '',
+  logoUrl: '/images/logo.png',
+  logoAlt: 'Logo Pinpon Création',
+  imageMaps: '/images/map.png',
+  googleMaps: '',
+  googleMapsTitle: '',
+  footerText: 'Fait avec ❤️ par Zatchouli © 2024. Tous droits réservés.',
+};
+
+let siteSettings: SiteSettings = siteSettingsFallback;
+try {
+  const entries = await getCollection('SiteSettings');
+  const data = entries[0]?.data;
+  if (data) {
+	siteSettings = {
+	  siteTitle: data.siteTitle ?? siteSettingsFallback.siteTitle,
+	  siteDescription: data.siteDescription ?? siteSettingsFallback.siteDescription,
+	  logoUrl: data.logoUrl ?? siteSettingsFallback.logoUrl,
+	  logoAlt: data.logoAlt ?? siteSettingsFallback.logoAlt,
+	  imageMaps: data.imageMaps ?? siteSettingsFallback.imageMaps,
+  googleMaps: data.googleMaps ?? siteSettingsFallback.googleMaps,
+  // @ts-expect-error: allow missing field in CSV for now
+  googleMapsTitle: data.googleMapsTitle ?? siteSettingsFallback.googleMapsTitle,
+	  footerText: data.footerText ?? siteSettingsFallback.footerText,
+	};
+  }
+} catch (e) {
+  siteSettings = siteSettingsFallback;
+}
+
+type SocialLink = {
+  id: string;
+  platform: string;
+  label: string;
+  url: string;
+  icon: string;
+  order: number;
+  visible: boolean;
+  title?: string;
+};
+
+const socialLinksFallback: SocialLink[] = [
+  { id: '1', platform: 'Instagram', label: 'Instagram', url: 'https://instagram.com/zatchouli', icon: 'openmoji:instagram', order: 1, visible: true, title: 'Instagram' },
+  { id: '2', platform: 'Facebook', label: 'Facebook', url: 'https://facebook.com/zatchouli', icon: 'openmoji:facebook', order: 2, visible: true, title: 'Facebook' },
+  { id: '3', platform: 'YouTube', label: 'YouTube', url: 'https://youtube.com/zatchouli', icon: 'openmoji:youtube', order: 3, visible: true, title: 'YouTube' },
+];
+
+let socialLinks: SocialLink[] = socialLinksFallback;
+try {
+  const entries = await getCollection('SocialLinks');
+  const loaded = entries.map((entry: any) => ({
+	id: String(entry.data.id ?? ''),
+	platform: entry.data.platform ?? '',
+	label: entry.data.label ?? '',
+	url: entry.data.url ?? '',
+	icon: entry.data.icon ?? '',
+	order: typeof entry.data.order === 'number' ? entry.data.order : 0,
+	visible: entry.data.visible === undefined ? true : String(entry.data.visible) === 'true',
+	title: entry.data.title ?? '',
+  })).filter((item: SocialLink) => item.visible);
+  socialLinks = loaded.length ? loaded : socialLinksFallback;
+} catch (e) {
+  socialLinks = socialLinksFallback;
+}
+
+type NavigationItem = {
+  id: string;
+  label: string;
+  anchor: string;
+  url: string;
+  order: number;
+  location: string;
+  visible: boolean;
+  icon?: string;
+  ariaLabel?: string;
+};
+
+const navigationFallback: NavigationItem[] = [
+  // Mentions obligatoires
+  { id: '8', label: 'Mentions légales', anchor: 'mentions-legales', url: '/mentions-legales', order: 8, location: 'footer-mentions-obligatoires', visible: true },
+  { id: '9', label: 'Politique de confidentialité', anchor: 'confidentialite', url: '/mentions-legales/#politique-confidentialite', order: 9, location: 'footer-mentions-obligatoires', visible: true },
+  { id: '10', label: 'CGV', anchor: 'cgv', url: '/mentions-legales/#cgv', order: 10, location: 'footer-mentions-obligatoires', visible: true },
+  // Plan du site
+  { id: '11', label: 'Plan du site', anchor: 'plan-du-site', url: '/plan-du-site', order: 11, location: 'footer-plan-du-site', visible: true },
+  { id: '1', label: 'Accueil', anchor: 'home', url: '#home', order: 1, location: 'footer-plan-du-site', visible: true },
+  { id: '2', label: 'Qui suis-je ?', anchor: 'bio', url: '#bio', order: 2, location: 'footer-plan-du-site', visible: true },
+  { id: '3', label: 'Protocole', anchor: 'about', url: '#about', order: 3, location: 'footer-plan-du-site', visible: true },
+  { id: '4', label: 'Dossiers', anchor: 'portfolio', url: '#portfolio', order: 4, location: 'footer-plan-du-site', visible: true },
+  { id: '5', label: 'Partenaires', anchor: 'partners', url: '#partners', order: 5, location: 'footer-plan-du-site', visible: true },
+  { id: '6', label: 'Avis', anchor: 'reviews', url: '#reviews', order: 6, location: 'footer-plan-du-site', visible: true },
+  { id: '7', label: 'Contact', anchor: 'contact', url: '#contact', order: 7, location: 'footer-plan-du-site', visible: true },
+];
+
+let navigation: NavigationItem[] = navigationFallback;
+try {
+  const navEntries = await getCollection('Navigation');
+  navigation = navEntries
+	.map((entry: any) => ({
+	  id: String(entry.data.id ?? ''),
+	  label: entry.data.label ?? '',
+	  anchor: entry.data.anchor ?? '',
+	  url: entry.data.url ?? '',
+	  order: typeof entry.data.order === 'number' ? entry.data.order : 0,
+	  location: entry.data.location ?? '',
+	  visible: entry.data.visible === undefined ? true : String(entry.data.visible) === 'true',
+	  icon: entry.data.icon,
+	  ariaLabel: entry.data.ariaLabel,
+	}));
+  if (navigation.length === 0) navigation = navigationFallback;
+} catch (e) {
+  navigation = navigationFallback;
+}
+---
+<footer class="section" style="padding-top: 30px; padding-bottom: 0px;">
+  <div class="container">
+	<div class="footer-grid">
+	  {/* Col 1: Logo + description + socials (affiché seulement si au moins un champ existe) */}
+	  {(siteSettings.logoUrl || siteSettings.logoAlt || siteSettings.siteDescription || (socialLinks && socialLinks.length > 0)) && (
+		<div class="footer-col footer-logo-col">
+		  <h4 class="footer-menu-title" style="margin-bottom:0.5rem;">À propos</h4>
+		  {siteSettings.logoUrl && (
+			<a href="#home" class="header-logo footer-logo">
+			  <img src={siteSettings.logoUrl} alt={siteSettings.logoAlt} class="footer-logo-img" style="max-width: 120px;" />
+			</a>
+		  )}
+		  {siteSettings.siteDescription && (
+			<div class="footer-desc" style="margin-top: 0.5rem; color: var(--light-text);">
+			  {siteSettings.siteDescription}
+			</div>
+		  )}
+		  {socialLinks && socialLinks.length > 0 && (
+			<div class="footer-socials">
+			  {socialLinks.sort((a, b) => a.order - b.order).map(link => (
+				<a href={link.url} target="_blank" rel="noopener noreferrer" class="magnetic-link" title={link.title ?? link.label} aria-label={link.label}>
+				  <Icon name={link.icon} style="height: 1.5rem; width: 1.5rem;" />
+				</a>
+			  ))}
+			</div>
+		  )}
+		</div>
+	  )}
+	  <!-- Col 2: Google Maps embed or fallback image -->
+	  {(siteSettings.googleMaps || siteSettings.imageMaps) && (
+		<div class="footer-col footer-map-col">
+		  <h4 class="footer-menu-title" style="margin-bottom:0.5rem;">Plan d'accès</h4>
+		  {siteSettings.googleMaps ? (
+			<GoogleMaps url={siteSettings.googleMaps} title="Plan d'accès" />
+		  ) : siteSettings.imageMaps ? (
+			<img src={siteSettings.imageMaps} alt="Plan d'accès" class="footer-map-img" style="max-width: 180px; border-radius: 0.5rem; margin-bottom: 0.5rem;" />
+		  ) : null}
+		  {siteSettings.googleMaps && !siteSettings.googleMaps.startsWith('https://www.google.com/maps/embed') && (
+			<div style="margin-top:0.5rem;font-size:0.9em;color:var(--light-text);">
+			  <span>Le lien Google Maps fourni n'est pas un lien d'intégration valide. Pour afficher la carte ici, utilisez le lien d'intégration (commence par https://www.google.com/maps/embed...)</span>
+			</div>
+		  )}
+		</div>
+	  )}
+	  {/* Col 3: Plan du site (affiché seulement si au moins un lien existe) */}
+	  {navigation.filter((item: NavigationItem) => item.location === 'footer-plan-du-site' && item.visible).length > 0 && (
+		<div class="footer-col">
+		  <nav class="footer-sitemap">
+			<h4 class="footer-menu-title">Plan du site</h4>
+			<ul>
+			  {navigation.filter((item: NavigationItem) => item.location === 'footer-plan-du-site' && item.visible)
+				.sort((a: NavigationItem, b: NavigationItem) => a.order - b.order)
+				.map((item: NavigationItem) => (
+				  <li><a href={item.url} aria-label={item.ariaLabel}>{item.label}</a></li>
+				))}
+			</ul>
+		  </nav>
+		</div>
+	  )}
+	  {/* Col 4: Mentions obligatoires (affiché seulement si au moins un lien existe) */}
+	  {navigation.filter((item: NavigationItem) => item.location === 'footer-mentions-obligatoires' && item.visible).length > 0 && (
+		<div class="footer-col">
+		  <nav class="footer-legal">
+			<h4 class="footer-menu-title">Mentions Obligatoires</h4>
+			<ul>
+			  {navigation.filter((item: NavigationItem) => item.location === 'footer-mentions-obligatoires' && item.visible)
+				.sort((a: NavigationItem, b: NavigationItem) => a.order - b.order)
+				.map((item: NavigationItem) => (
+				  <li><a href={item.url} aria-label={item.ariaLabel}>{item.label}</a></li>
+				))}
+			</ul>
+		  </nav>
+		</div>
+	  )}
+	</div>
+  </div>
+</footer>
+
+<footer class="footer-credits">
+  <div class="container">
+	<p class="footer-copy">{siteSettings.footerText ?? 'Fait avec ❤️ par Zatchouli © 2024. Tous droits réservés.'}</p>
+  </div>
+</footer>

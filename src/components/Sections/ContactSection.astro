@@ -1,0 +1,138 @@
+---
+
+import { getCollection } from "astro:content";
+import { Icon } from 'astro-icon/components'
+
+type ContactSection = {
+  id: string | number;
+  heading: string;
+  subheading: string;
+  description: string;
+  email: string;
+  phone: string;
+  order?: number;
+  visible?: boolean;
+};
+
+type ContactChannel = {
+  id: string | number;
+  type: string;
+  label: string;
+  value: string;
+  icon?: string;
+  order?: number;
+  contactSectionId?: string | number;
+};
+
+// Fallbacks
+let contact: ContactSection = {
+  id: 1,
+  heading: "Déclencher l'Intervention",
+  subheading: "Prise de Contact",
+  description: "Prêt à démarrer l'intervention ? Un simple message suffit pour établir le contact et planifier la mission.",
+  email: "contact@pinpon-creation.fr",
+  phone: "06 12 34 56 78",
+  order: 1,
+  visible: true,
+};
+
+let channels: ContactChannel[] = [
+  {
+    id: 1,
+    type: "email",
+    label: "Email",
+    value: "contact@pinpon-creation.fr",
+    icon: undefined,
+    order: 1,
+    contactSectionId: 1,
+  },
+  {
+    id: 2,
+    type: "phone",
+    label: "Téléphone",
+    value: "06 12 34 56 78",
+    icon: undefined,
+    order: 2,
+    contactSectionId: 1,
+  },
+];
+
+try {
+  const contactSection = await getCollection("ContactSection");
+  if (contactSection && contactSection[0]?.data) {
+    contact = { ...contact, ...contactSection[0].data };
+  }
+} catch (e) {}
+
+try {
+  const channelsData = await getCollection("ContactChannels");
+  if (channelsData && channelsData.length > 0) {
+    channels = channelsData.map((c) => c.data)
+      .filter(c => c.contactSectionId == contact.id)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    if (channels.length === 0) {
+      channels = channelsData.map((c) => c.data).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+  }
+} catch (e) {}
+---
+<section id="contact" class="section">
+    <div class="container">
+        <div class="section-intro">
+            <h2 class="section-title-main scroll-reveal up">
+              <span class="section-title-sub">{contact.subheading}</span>
+              {contact.heading}
+            </h2>
+            <p class="section-description scroll-reveal up" style="transition-delay: 100ms;">{contact.description}</p>
+        </div>
+        <div class="contact-channels">
+            {channels.map((ch, i) => (
+              <a
+                href={ch.type === "email" ? `mailto:${ch.value}` : ch.type === "phone" ? `tel:${ch.value.replace(/\s+/g, '')}` : ch.value}
+                class={`contact-channel magnetic-link scroll-reveal up`}
+                style={i > 0 ? `transition-delay: ${i * 100}ms;` : undefined}
+              >
+                {ch.icon ? (
+                  <span class="contact-channel-icon">
+                    <Icon name={ch.icon} />
+                  </span>
+                ) : null}
+                <h3 class="contact-channel-title">{ch.label}</h3>
+                <p class="contact-channel-info">{ch.value}</p>
+              </a>
+            ))}
+        </div>
+        <div id="contact-form-container" class="scroll-reveal up" style="transition-delay: 200ms;">
+          <form id="contact-form" novalidate>
+            <div id="form-success-overlay">
+                <svg id="success-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <p id="success-message">Demande d'intervention reçue. Je reviens vers vous rapidement.</p>
+            </div>
+            <div class="form-grid">
+              <div class="floating-label-group">
+                <input type="text" name="name" id="name" placeholder=" " class="floating-input" required/>
+                <label for="name" class="floating-label">Votre nom</label>
+              </div>
+              <div class="floating-label-group">
+                <input type="email" name="email" id="email" placeholder=" " class="floating-input" required/>
+                <label for="email" class="floating-label">Votre email</label>
+              </div>
+            </div>
+            <div class="floating-label-group">
+              <input type="text" name="subject" id="subject" placeholder=" " class="floating-input" required/>
+              <label for="subject" class="floating-label">Objet de la demande</label>
+            </div>
+            <div class="floating-label-group">
+              <textarea name="message" id="message" rows="5" placeholder=" " class="floating-input" required></textarea>
+              <label for="message" class="floating-label">Description de la situation</label>
+            </div>
+            <div class="form-footer">
+              <button type="submit" id="submit-button" class="magnetic-link">
+                ENVOYER LA DEMANDE
+              </button>
+                <div id="form-status"></div>
+            </div>
+          </form>
+        </div>
+    </div>
+</section>

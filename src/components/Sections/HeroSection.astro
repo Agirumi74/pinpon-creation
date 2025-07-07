@@ -1,0 +1,57 @@
+---
+export const prerender = true;
+import { getCollection } from "astro:content";
+
+type HeroSection = {
+  id: string | number;
+  subtitle: string;
+  title: string;
+  content: string;
+  ctaLabel: string;
+  ctaAnchor?: string;
+  background?: string;
+  order?: number;
+  visible?: boolean;
+};
+
+let hero: HeroSection = {
+  id: 1,
+  subtitle: "Analyse de la situation...",
+  title: "Votre projet a besoin d'une intervention ?",
+  content: "J'allie la rigueur tactique du sapeur-pompier à la précision créative du designer pour déployer des solutions web percutantes qui répondent à l'urgence de vos ambitions.",
+  ctaLabel: "DEMANDER UNE INTERVENTION",
+  ctaAnchor: "contact",
+  background: "animated-grid",
+  order: 1,
+  visible: true,
+};
+
+try {
+  // @ts-ignore
+  const heroSection = await getCollection("HeroSection") as Array<{ data: HeroSection }>;
+  if (heroSection && heroSection[0]?.data) {
+    hero = { ...hero, ...heroSection[0].data };
+  }
+} catch (e) {
+  // fallback sur les valeurs par défaut
+}
+
+console.log ("Hero Section Data:", hero.title);
+---
+<section id="home" class="section">
+    <div class={hero.background || "animated-grid"}></div>
+    <div class="hero-content">
+        <p class="scroll-reveal up hero-subtitle">
+          <span>{hero.subtitle}</span>
+        </p>
+        <div class="scroll-reveal up" data-delay="100">
+          <h1 id="typewriter-h1">{hero.title}</h1>
+        </div>
+        <p class="hero-text scroll-reveal up" data-delay="200">{hero.content}</p>
+        <div class="hero-cta-container scroll-reveal up" data-delay="300">
+          <a href={`#${hero.ctaAnchor || 'contact'}`} class="cta-button magnetic-link">
+            {hero.ctaLabel}
+          </a>
+        </div>
+      </div>
+</section>

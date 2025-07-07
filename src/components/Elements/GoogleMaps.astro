@@ -1,0 +1,23 @@
+---
+// GoogleMaps.astro
+// Props: url (string, required), title (string, optional)
+interface Props {
+  url: string;
+  title?: string;
+}
+const { url, title = 'Carte Google Maps' } = Astro.props;
+---
+{url && (
+  <div class="googlemaps-embed" style="width:100%;max-width:400px;">
+    <iframe
+      src={url}
+      title={title}
+      width="100%"
+      height="220"
+      style="border:0;border-radius:0.5rem;"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+    ></iframe>
+  </div>
+)}

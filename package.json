@@ -9,6 +9,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.11.0"
+    "@ascorbic/airtable-loader": "^1.0.5",
+    "@iconify-json/openmoji": "^1.2.9",
+    "astro": "^5.11.0",
+    "astro-font": "^1.1.0",
+    "astro-icon": "^1.1.5"
   }
 }

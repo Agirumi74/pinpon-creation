@@ -1,0 +1,1094 @@
+---
+import '../styles/global.css';
+import { AstroFont } from "astro-font";
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+import { 
+  DEFAULT_TITLE, 
+  DEFAULT_DESCRIPTION, 
+  DEFAULT_KEYWORDS, 
+  DEFAULT_AUTHOR, 
+  DEFAULT_OG_IMAGE, 
+  DEFAULT_PREFETCH_URLS,
+  DEFAULT_CSS_FILES,
+  DEFAULT_JS_FILES,
+  DEFAULT_LANG,
+  FAVICON_ICO,
+  FAVICON_32x32,
+  FAVICON_16x16,
+  APPLE_TOUCH_ICON,
+  MANIFEST,
+  ROBOTS_CONTENT,
+  THEME_COLOR
+} from '../const.ts';
+
+interface Props {
+  title: (string);
+  description: (string);
+  keywords?: (string);
+  author?: (string);
+  ogImage?: (string);
+  canonicalUrl?: (string | URL);
+  prefetchUrls?: (string | URL)[];
+  cssFiles?: (string | URL)[];
+  jsFiles?: (string | null)[];
+  lang?: (string);
+  robots?: (string);
+}
+
+// Using the current URL as the default canonical URL if not provided
+const { url } = Astro.request;
+const { 
+  title = DEFAULT_TITLE, 
+  description = DEFAULT_DESCRIPTION, 
+  keywords = DEFAULT_KEYWORDS, 
+  author = DEFAULT_AUTHOR, 
+  ogImage = DEFAULT_OG_IMAGE, 
+  canonicalUrl = url, 
+  prefetchUrls = DEFAULT_PREFETCH_URLS, 
+  cssFiles = DEFAULT_CSS_FILES, 
+  jsFiles = DEFAULT_JS_FILES,
+  lang = DEFAULT_LANG,
+  robots = ROBOTS_CONTENT
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <AstroFont
+    config={[
+      {
+        name: "Inter",
+        src: [
+          {
+            weight: 'normal',
+            style: 'normal',
+            path: '../src/fonts/Inter/Inter-VariableFont_opsz,wght.ttf',
+          },
+        ],
+        preload: true,
+        display: "swap",
+        selector: "h1,h2,h3,h4,h5,h6,.btn, .heading",
+        fallback: "sans-serif",
+      },
+      {
+        name: "Roboto Mono",
+        src: [
+          {
+            weight: 'bold',
+            style: 'normal',
+            path: '../src/fonts/Roboto_Mono/static/RobotoMono-Bold.ttf',
+          },
+          {
+            weight: '500',
+            style: 'normal',
+            path: '../src/fonts/Roboto_Mono/static/RobotoMono-Medium.ttf',
+          },
+          {
+            weight: 'normal',
+            style: 'normal',
+            path: '../src/fonts/Roboto_Mono/static/RobotoMono-Regular.ttf',
+          },
+          {
+            weight: '600',
+            style: 'normal',
+            path: '../src/fonts/Roboto_Mono/static/RobotoMono-SemiBold.ttf',
+          },
+        ],
+        preload: true,
+        display: "swap",
+        selector: "body, button",
+        fallback: "sans-serif",
+      },
+    ]}
+  />
+    
+    <!-- Title and Meta -->
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="keywords" content={keywords}>
+    <meta name="author" content={author}>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalUrl} />
+    
+    <!-- Prefetch URLs -->
+    { prefetchUrls.map((url: string | URL | null | undefined) => (
+      <link rel="prefetch" href={url} />
+    ))}
+    
+    <!-- Styles -->
+    { cssFiles.length > 0 && cssFiles.map((file) => (
+      <link rel="stylesheet" href={file} />
+    ))}
+
+  
+    <!-- Scripts -->
+    { jsFiles.length > 0 && jsFiles.map((file) => (
+      <script async src={file}></script>
+    ))}
+
+
+    <!-- Favicon -->
+    <link rel="icon" href={FAVICON_ICO}>
+    <link rel="apple-touch-icon" sizes="180x180" href={APPLE_TOUCH_ICON}>
+    <link rel="icon" type="image/png" sizes="32x32" href={FAVICON_32x32}>
+    <link rel="icon" type="image/png" sizes="16x16" href={FAVICON_16x16}>
+    <link rel="manifest" href={MANIFEST}>
+    
+    <!-- Accessibility and SEO -->
+    <meta name="robots" content={robots}>
+    <meta name="theme-color" content={THEME_COLOR}>
+
+  </head>
+ <body class="cursor-hidden">
+    <!-- Curseur custom (optionnel, à désactiver si bug) -->
+    <div id="cursor"></div>
+    <Header />
+    <slot />
+    <Footer />
+  </body>
+  <script is:inline>
+document.addEventListener('DOMContentLoaded', () => {
+  const qs = (selector) => document.querySelector(selector);
+  const qsa = (selector) => document.querySelectorAll(selector);
+
+  // --- ULTIMATE INTERACTIVITY ENGINE ---
+
+  function initUltimateCursor() {
+    const cursor = qs('#cursor');
+    if (!cursor) return;
+    let mouseX = -100, mouseY = -100;
+    let targetX = -100, targetY = -100;
+    const speed = 0.92;
+
+    // SVG pompier stylisÃ© pour le curseur
+    const pinponSVG = `<svg class="pinpon-cursor" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="19" cy="32" rx="8" ry="4" fill="#000" opacity="0.18"/>
+      <ellipse cx="19" cy="19" rx="10" ry="13" fill="#232a3d" stroke="#fff" stroke-width="2"/>
+      <ellipse cx="19" cy="11" rx="8" ry="6" fill="#e0e0e0" stroke="#888" stroke-width="1.2"/>
+      <ellipse cx="19" cy="11" rx="3" ry="1.2" fill="#fff" opacity="0.18"/>
+      <ellipse cx="19" cy="19" rx="6" ry="8" fill="#ffe066" opacity="0.13"/>
+      <ellipse cx="19" cy="19" rx="2.5" ry="3.5" fill="#fff" opacity="0.08"/>
+      <ellipse cx="19" cy="32" rx="8" ry="4" fill="#ffe066" opacity="0.08"/>
+      <ellipse cx="19" cy="32" rx="4" ry="2" fill="#fff" opacity="0.10"/>
+    </svg>`;
+    cursor.innerHTML = pinponSVG;
+
+    // Click effect
+    function triggerClickEffect() {
+      cursor.classList.add('clicked');
+      setTimeout(() => cursor.classList.remove('clicked'), 80);
+    }
+
+    window.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    window.addEventListener('mousedown', triggerClickEffect);
+    window.addEventListener('touchstart', triggerClickEffect);
+
+    const magneticElements = qsa('.magnetic-link');
+    const magneticStrength = 0.22;
+
+    // Couleur adaptative selon le fond sous le curseur
+    function updateCursorGlow() {
+      // Prend la couleur du pixel sous le curseur (canvas technique)
+      const x = Math.round(targetX);
+      const y = Math.round(targetY);
+      let glow = 'glow-dark';
+      try {
+        const el = document.elementFromPoint(x, y);
+        if (el) {
+          const bg = window.getComputedStyle(el).backgroundColor;
+          if (bg && (bg.includes('255, 255, 255') || bg.includes('248, 247, 245'))) {
+            glow = 'glow-light';
+          } else if (bg && (bg.includes('29, 161, 242') || bg.includes('1da1f2'))) {
+            glow = 'glow-blue';
+          }
+        }
+      } catch(e) {}
+      cursor.classList.remove('glow-light', 'glow-dark', 'glow-blue');
+      cursor.classList.add(glow);
+    }
+
+    const loop = () => {
+      targetX += (mouseX - targetX) * speed;
+      targetY += (mouseY - targetY) * speed;
+      if (Math.abs(targetX - mouseX) < 0.5) targetX = mouseX;
+      if (Math.abs(targetY - mouseY) < 0.5) targetY = mouseY;
+      cursor.style.transform = `translate(${targetX - cursor.offsetWidth / 2}px, ${targetY - cursor.offsetHeight / 2}px)`;
+      updateCursorGlow();
+
+      magneticElements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const dx = mouseX - (rect.left + rect.width / 2);
+        const dy = mouseY - (rect.top + rect.height / 2);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 80) {
+            const transX = dx * magneticStrength;
+            const transY = dy * magneticStrength;
+            el.style.transform = `translate(${transX}px, ${transY}px)`;
+        } else {
+            el.style.transform = 'translate(0, 0)';
+        }
+      });
+
+      requestAnimationFrame(loop);
+    };
+    loop();
+
+    document.body.addEventListener('mouseenter', () => cursor.style.opacity = '1');
+    document.body.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+
+    magneticElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+    });
+  }
+
+  function initValueCardGlow() {
+    qsa('.value-card').forEach(card => {
+        const glow = card.querySelector('.value-card-glow');
+        if (!glow) return;
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            glow.style.left = `${x}px`;
+            glow.style.top = `${y}px`;
+        });
+    });
+  }
+
+  // --- CORE FUNCTIONALITY ---
+  
+  function initHeader() {
+    const header = qs('#main-header');
+    const mobileMenuButton = qs('#mobile-menu-button');
+    const mobileMenu = qs('#mobile-menu');
+    const menuOpenIcon = qs('#menu-open-icon');
+    const menuCloseIcon = qs('#menu-close-icon');
+    const navLinks = qsa('#desktop-nav .nav-link');
+    const navLinksMobile = qsa('.nav-link-mobile');
+    const overlay = qs('#mobile-menu-overlay');
+    const focusableSelectors = 'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])';
+    const sections = Array.from(navLinks).map(link => qs(link.getAttribute('href'))).filter(s => s);
+    let currentActiveLink = null;
+    let lastFocusedElement = null;
+
+    // --- Mobile Menu Logic ---
+    function openMobileMenu() {
+      console.log('openMobileMenu called');
+      mobileMenu.classList.add('active');
+      mobileMenu.classList.remove('hidden');
+      overlay.classList.add('active');
+      overlay.classList.remove('hidden');
+      document.body.classList.add('body-no-scroll');
+      menuOpenIcon.classList.add('animated');
+      menuCloseIcon.classList.remove('hidden');
+      setTimeout(() => menuCloseIcon.classList.add('animated'), 10);
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      overlay.setAttribute('aria-hidden', 'false');
+      mobileMenu.setAttribute('tabindex', '0');
+      lastFocusedElement = document.activeElement;
+      // Focus first link
+      const firstLink = mobileMenu.querySelector(focusableSelectors);
+      if (firstLink) firstLink.focus();
+      // Trap focus
+      document.addEventListener('keydown', trapFocus);
+      document.addEventListener('keydown', handleEscape);
+    }
+    function closeMobileMenu() {
+      console.log('closeMobileMenu called');
+      mobileMenu.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.classList.remove('body-no-scroll');
+      menuOpenIcon.classList.remove('hidden');
+      setTimeout(() => menuOpenIcon.classList.remove('animated'), 10);
+      menuCloseIcon.classList.remove('animated');
+      setTimeout(() => menuCloseIcon.classList.add('hidden'), 300);
+      setTimeout(() => mobileMenu.classList.add('hidden'), 400);
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('aria-hidden', 'true');
+      mobileMenu.removeAttribute('tabindex');
+      if (lastFocusedElement) lastFocusedElement.focus();
+      document.removeEventListener('keydown', trapFocus);
+      document.removeEventListener('keydown', handleEscape);
+    }
+    function trapFocus(e) {
+      if (!mobileMenu.classList.contains('active')) return;
+      if (e.key !== 'Tab') return;
+      const focusableEls = Array.from(mobileMenu.querySelectorAll(focusableSelectors)).filter(el => !el.hasAttribute('disabled'));
+      if (focusableEls.length === 0) return;
+      const first = focusableEls[0];
+      const last = focusableEls[focusableEls.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    function handleEscape(e) {
+      if (e.key === 'Escape') closeMobileMenu();
+    }
+    mobileMenuButton?.addEventListener('click', () => {
+      if (!mobileMenu.classList.contains('active')) {
+        openMobileMenu();
+      } else {
+        closeMobileMenu();
+      }
+    });
+    overlay?.addEventListener('click', closeMobileMenu);
+    // Close on nav click (mobile)
+    navLinksMobile.forEach(link => link.addEventListener('click', closeMobileMenu));
+
+    // --- Navigation Scroll/Active Link ---
+    const setActiveLink = (link) => {
+      if (currentActiveLink) {
+        currentActiveLink.classList.remove('active');
+        const oldUnderline = currentActiveLink.querySelector('.active-underline');
+        if(oldUnderline) oldUnderline.remove();
+        // Remove .active from mobile link if exists
+        const mobileTwin = Array.from(navLinksMobile).find(l => l.getAttribute('href') === currentActiveLink.getAttribute('href'));
+        if (mobileTwin) mobileTwin.classList.remove('active');
+      }
+      link.classList.add('active');
+      if (!link.querySelector('.active-underline')) {
+        const underline = document.createElement('div');
+        underline.className = 'active-underline';
+        link.appendChild(underline);
+      }
+      // Also set .active on mobile link
+      const mobileTwin = Array.from(navLinksMobile).find(l => l.getAttribute('href') === link.getAttribute('href'));
+      if (mobileTwin) mobileTwin.classList.add('active');
+      currentActiveLink = link;
+    };
+
+    window.addEventListener('scroll', () => {
+      header?.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+
+    const handleNavClick = (e, isMobile) => {
+      e.preventDefault();
+      const target = e.currentTarget;
+      const targetId = target.getAttribute('href');
+      if (!targetId) return;
+
+      const targetElement = qs(targetId);
+      if (targetElement) {
+        const headerOffset = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+      if (isMobile) {
+        closeMobileMenu();
+      }
+    };
+    navLinks.forEach(link => link.addEventListener('click', (e) => handleNavClick(e, false)));
+    navLinksMobile.forEach(link => link.addEventListener('click', (e) => handleNavClick(e, true)));
+
+    // --- Active Link on Scroll ---
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          const newActiveLink = Array.from(navLinks).find(link => link.getAttribute('href') === `#${id}`);
+          if (newActiveLink && newActiveLink !== currentActiveLink) {
+            setActiveLink(newActiveLink);
+          }
+        }
+      });
+    }, { rootMargin: '-40% 0px -60% 0px', threshold: 0 });
+    sections.forEach(section => observer.observe(section));
+    if(navLinks.length > 0) setActiveLink(navLinks[0]);
+
+    // --- Dynamic Header Glassmorph + Brand Color Adaptation ---
+    const darkSections = ['bio', 'about', 'partners'];
+    const sectionElements = darkSections.map(id => document.getElementById(id)).filter(Boolean);
+    let lastHeaderMode = null;
+    function setHeaderMode(mode) {
+      if (lastHeaderMode === mode) return;
+      header.classList.remove('header-light', 'header-dark');
+      header.classList.add(mode === 'dark' ? 'header-dark' : 'header-light');
+      // Adapt nav link color for accessibility/brand
+      navLinks.forEach(link => {
+        if (mode === 'dark') {
+          link.style.color = 'var(--secondary-light-text)';
+        } else {
+          link.style.color = 'var(--secondary-dark-text)';
+        }
+      });
+      navLinksMobile.forEach(link => {
+        if (mode === 'dark') {
+          link.style.color = 'var(--light-text)';
+        } else {
+          link.style.color = 'var(--dark-text)';
+        }
+      });
+      lastHeaderMode = mode;
+    }
+    const headerObserver = new IntersectionObserver((entries) => {
+      let foundDark = false;
+      entries.forEach(entry => {
+        if (entry.isIntersecting && darkSections.includes(entry.target.id)) {
+          foundDark = true;
+        }
+      });
+      setHeaderMode(foundDark ? 'dark' : 'light');
+    }, { threshold: 0.35 });
+    sectionElements.forEach(section => headerObserver.observe(section));
+    // Default mode
+    setHeaderMode('light');
+  }
+
+  function initTypewriter() {
+    const el = qs('#typewriter-h1');
+    if (!el) return;
+    const text = el.dataset.text || '';
+    let i = 0;
+    el.innerHTML = '';
+    
+    function type() {
+      if (i < text.length) {
+        el.innerHTML = text.substring(0, i + 1) + '<span style="color:var(--accent-red); animation: pulse 1s infinite;">_</span>';
+        i++;
+        setTimeout(type, 80);
+      } else {
+        const cursor = el.querySelector('span');
+        if (cursor) cursor.style.display = 'none';
+      }
+    }
+    setTimeout(type, 1000);
+  }
+
+  function init3DReviewsCarousel() {
+    const carousel = qs('#reviews-carousel');
+    const cards = qsa('.review-card');
+    const prevBtn = qs('#prev-review');
+    const nextBtn = qs('#next-review');
+    if (!carousel || cards.length === 0 || !prevBtn || !nextBtn) return;
+
+    let currentIndex = 0;
+    const totalCards = cards.length;
+    const theta = 360 / totalCards;
+    const radius = 288;
+
+    const mod = (n, m) => ((n % m) + m) % m;
+
+    function positionAndRotate() {
+        const angle = -currentIndex * theta;
+        carousel.style.transform = `translateZ(-${radius}px) rotateY(${angle}deg)`;
+
+        cards.forEach((card, i) => {
+            const cardAngle = i * theta;
+            card.style.transform = `rotateY(${cardAngle}deg) translateZ(${radius}px)`;
+            card.classList.toggle('active', i === mod(currentIndex, totalCards));
+        });
+    }
+
+    nextBtn.addEventListener('click', () => {
+        currentIndex++;
+        positionAndRotate();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        currentIndex--;
+        positionAndRotate();
+    });
+
+    positionAndRotate(); // Initial setup
+  }
+
+
+  function initPortfolioModal() {
+    const grid = qs('#projects-grid');
+    const modalBackdrop = qs('#project-modal-backdrop');
+    const modal = qs('#project-modal');
+    const closeButton = qs('#modal-close-button');
+    if (!grid || !modalBackdrop || !modal || !closeButton) return;
+
+    const openModal = (projectData) => {
+      qs('#modal-image').src = projectData.image || '';
+      qs('#modal-image').alt = projectData.title || '';
+      qs('#modal-category').textContent = projectData.category;
+      qs('#modal-title').textContent = projectData.title;
+      qs('#modal-description').textContent = projectData.description;
+      qs('#modal-link').href = projectData.url || '#';
+      
+      document.body.classList.add('body-no-scroll');
+      modalBackdrop.classList.add('visible');
+    };
+
+    const closeModal = () => {
+      document.body.classList.remove('body-no-scroll');
+      modalBackdrop.classList.remove('visible');
+    };
+
+    grid.addEventListener('click', (e) => {
+      const card = e.target.closest('.project-card');
+      if (card && card.dataset) {
+        const projectData = {
+          id: card.dataset.projectId,
+          title: card.dataset.projectTitle,
+          category: card.dataset.projectCategory,
+          image: card.dataset.projectImage,
+          description: card.dataset.projectDescription,
+          url: card.dataset.projectUrl,
+        };
+        openModal(projectData);
+      }
+    });
+
+    closeButton.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e) => {
+        if (e.target === modalBackdrop) closeModal();
+    });
+  }
+
+  function initContactForm() {
+    const form = qs('#contact-form');
+    const statusEl = qs('#form-status');
+    const submitButton = qs('#submit-button');
+    // --- Field Validation ---
+    const fields = [
+      { id: 'name', type: 'text', required: true },
+      { id: 'email', type: 'email', required: true },
+      { id: 'subject', type: 'text', required: true },
+      { id: 'message', type: 'textarea', required: true },
+    ];
+
+    function validateField(field) {
+      const input = qs(`#${field.id}`);
+      const label = input?.parentElement.querySelector('.floating-label');
+      let valid = false;
+      if (!input) return false;
+      if (field.required && !input.value.trim()) {
+        valid = false;
+      } else if (field.type === 'email') {
+        valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+      } else {
+        valid = true;
+      }
+      input.classList.remove('input-error', 'input-success');
+      label?.classList.remove('label-error', 'label-success');
+      if (input.value.trim() === '') {
+        // Neutral, no color if untouched
+        return false;
+      }
+      if (valid) {
+        input.classList.add('input-success');
+        label?.classList.add('label-success');
+      } else {
+        input.classList.add('input-error');
+        label?.classList.add('label-error');
+      }
+      return valid;
+    }
+
+    // Validate on blur
+    fields.forEach(field => {
+      const input = qs(`#${field.id}`);
+      if (input) {
+        input.addEventListener('blur', () => validateField(field));
+        input.addEventListener('input', () => validateField(field));
+      }
+    });
+
+    // --- Form Submit ---
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form || !statusEl || !submitButton || !successOverlay) return;
+
+      let allValid = true;
+      fields.forEach(field => {
+        const valid = validateField(field);
+        if (!valid) allValid = false;
+      });
+
+      if (!allValid) {
+        statusEl.innerHTML = `<p style=\"color: red;\">// ERREUR: Tous les champs sont requis ou invalides.</p>`;
+        setTimeout(() => { statusEl.innerHTML = ''; }, 3000);
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'ENVOI...';
+      statusEl.innerHTML = '';
+
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // --- WOW EFFECT ---
+      triggerFormWowEffect(form);
+
+      successOverlay.classList.add('visible');
+
+      setTimeout(() => {
+        successOverlay.classList.remove('visible');
+        submitButton.disabled = false;
+        submitButton.textContent = 'ENVOYER LA DEMANDE';
+        form.reset();
+        // Remove success classes after reset
+        fields.forEach(field => {
+          const input = qs(`#${field.id}`);
+          const label = input?.parentElement.querySelector('.floating-label');
+          input?.classList.remove('input-success', 'input-error');
+        label?.classList.remove('label-success', 'label-error');
+      });
+    }, 4000);
+  });
+
+  // --- WOW EFFECT: Firework/Confetti ---
+  function triggerFormWowEffect(formEl) {
+    // Remove any previous wow
+    const old = qs('.form-wow-firework');
+    if (old) old.remove();
+    const wow = document.createElement('div');
+    wow.className = 'form-wow-firework';
+    for (let i = 0; i < 10; i++) {
+      const firework = document.createElement('div');
+      firework.className = 'firework';
+      firework.style.setProperty('--angle', `${i * 36}deg`);
+      const bar = document.createElement('div');
+      bar.className = 'firework-bar';
+      firework.appendChild(bar);
+      wow.appendChild(firework);
+    }
+    formEl.appendChild(wow);
+    setTimeout(() => { wow.remove(); }, 1200);
+  }
+}
+
+  function initScrollAnimations() {
+    const animatedElements = qsa('.scroll-reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    animatedElements.forEach(el => observer.observe(el));
+
+    qsa('.stagger-group').forEach(group => {
+      const children = group.querySelectorAll('.scroll-reveal');
+      children.forEach((child, index) => {
+        child.style.transitionDelay = `${index * 150}ms`;
+      });
+    });
+  }
+
+  function initIgnition() {
+    const ignitionScreen = qs('#ignition-screen');
+    if(ignitionScreen) {
+        setTimeout(() => {
+            ignitionScreen.classList.add('is-hiding');
+            ignitionScreen.addEventListener('transitionend', () => {
+                ignitionScreen.remove();
+            }, { once: true });
+        }, 1500);
+    }
+  }
+  
+  function initInterventionCTA() {
+    const ctaButton = qs('a.cta-button[href="#contact"]');
+    if (!ctaButton) return;
+
+    ctaButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // --- Create Ripple Effect ---
+        const rippleOverlay = document.createElement('div');
+        rippleOverlay.style.position = 'fixed';
+        rippleOverlay.style.top = '0';
+        rippleOverlay.style.left = '0';
+        rippleOverlay.style.width = '100%';
+        rippleOverlay.style.height = '100%';
+        rippleOverlay.style.pointerEvents = 'none';
+        rippleOverlay.style.zIndex = '9999';
+        rippleOverlay.style.overflow = 'hidden';
+        document.body.appendChild(rippleOverlay);
+
+        const ripple = document.createElement('div');
+        ripple.style.position = 'absolute';
+        ripple.style.borderRadius = '50%';
+        ripple.style.background = 'var(--accent-red)';
+        ripple.style.width = '50px';
+        ripple.style.height = '50px';
+        ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+        ripple.style.animation = 'ripple-effect 0.8s ease-out';
+        ripple.style.left = `${e.clientX}px`;
+        ripple.style.top = `${e.clientY}px`;
+        rippleOverlay.appendChild(ripple);
+
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = `@keyframes ripple-effect { to { transform: translate(-50%, -50%) scale(50); opacity: 0; } }`;
+        document.head.appendChild(styleSheet);
+        
+        ripple.addEventListener('animationend', () => {
+            rippleOverlay.remove();
+            styleSheet.remove();
+        }, { once: true });
+
+        // --- Scroll to contact ---
+        const targetElement = qs('#contact');
+        if (targetElement) {
+            const headerOffset = 80;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.scrollY - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+    });
+  }
+
+  // --- INITIALIZE ALL ---
+  initIgnition();
+  initHeader();
+  initTypewriter();
+  initPortfolioModal();
+  initContactForm();
+  initScrollAnimations();
+  init3DReviewsCarousel();
+  initValueCardGlow();
+  initInterventionCTA();
+  if (window.matchMedia("(pointer: fine)").matches) {
+    initUltimateCursor();
+  }
+  // --- FIREFIGHTER RAMP ANIMATION ---
+  function initFirefighterRamp() {
+    const ramp = document.getElementById('firefighter-ramp');
+    const group = ramp ? ramp.querySelector('#firefighter-group') : null;
+    const body = group ? group.querySelector('#firefighter-body') : null;
+    const legs = group ? group.querySelector('#legs-group') : null;
+    const arms = body ? body.querySelector('#arms-group') : null;
+    const helmet = body ? body.querySelector('#helmet-group') : null;
+    const head = body ? body.querySelector('#head-group') : null;
+    const handTop = body ? body.querySelector('#hand-top') : null;
+    const handBottom = body ? body.querySelector('#hand-bottom') : null;
+    const visorReflection = helmet ? helmet.querySelector('rect[x="32"][y="77"]') : null;
+    const helmetGloss = helmet ? helmet.querySelector('#helmet-gloss') : null;
+    const sweat1 = body ? body.querySelector('#sweat-drop-1') : null;
+    const sweat2 = body ? body.querySelector('#sweat-drop-2') : null;
+    const ffMessage = body ? body.querySelector('#ff-message') : null;
+    let shadow = group ? group.querySelector('#ff-shadow') : null;
+    if (!ramp || !group || !body || !legs) return;
+
+    // Bubble marketing
+    let bubble = document.getElementById('firefighter-bubble');
+    if (!bubble) {
+      bubble = document.createElement('div');
+      bubble.id = 'firefighter-bubble';
+      bubble.style.position = 'fixed';
+      bubble.style.top = '90px';
+      bubble.style.right = '100px';
+      bubble.style.zIndex = '9999';
+      bubble.style.maxWidth = '260px';
+      bubble.style.background = 'rgba(255,255,255,0.92)';
+      bubble.style.borderRadius = '1.2em';
+      bubble.style.boxShadow = '0 8px 32px 0 rgba(0,0,0,0.18)';
+      bubble.style.padding = '1.1em 1.5em 1.1em 1.3em';
+      bubble.style.fontFamily = 'Inter, Roboto Mono, sans-serif';
+      bubble.style.fontWeight = '900';
+      bubble.style.fontSize = '1.1rem';
+      bubble.style.color = '#b81d38';
+      bubble.style.display = 'none';
+      bubble.style.transition = 'opacity 0.4s cubic-bezier(.7,1.7,.7,1), filter 0.4s cubic-bezier(.7,1.7,.7,1)';
+      bubble.style.pointerEvents = 'none';
+      bubble.style.backdropFilter = 'blur(7px)';
+      bubble.style.opacity = '0';
+      document.body.appendChild(bubble);
+    }
+
+    // Texts for each section
+    const sectionBubbles = [
+      { id: 'home', text: "🚒 Besoin d'une intervention web ? Pinpon arrive !" },
+      { id: 'bio', text: "🧢 Double casquette, double efficacité !" },
+      { id: 'about', text: "🚨 Protocole d'urgence digitale activé !" },
+      { id: 'portfolio', text: "📁 Dossiers d'intervention : mission accomplie !" },
+      { id: 'partners', text: "🤝 La confiance, c'est la base d'une bonne intervention." },
+      { id: 'reviews', text: "⭐ Satisfaction client : priorité absolue !" },
+      { id: 'contact', text: "🔔 Prêt à déclencher l'alarme ?" },
+    ];
+
+    // Get all sections and their positions
+    const sections = sectionBubbles.map(s => document.getElementById(s.id)).filter(Boolean);
+
+    function getCurrentSection(scrollY) {
+      let current = sectionBubbles[0];
+      for (let i = 0; i < sections.length; i++) {
+        const rect = sections[i].getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        if (scrollY >= top - window.innerHeight/2) {
+          current = sectionBubbles[i];
+        }
+      }
+      return current;
+    }
+
+    // Animation loop
+    let lastScrollY = window.scrollY;
+    let lastTime = performance.now();
+    let velocity = 0;
+    let bubbleTimeout = null;
+
+    function animate() {
+      // --- Messages d'encouragement ---
+      const messages = [
+        "On ne lache rien !",
+        "Toujours pret !",
+        "Courage, ca grimpe !",
+        "Pinpon Creation en action !",
+        "Rigueur & efficacite !",
+        "Mission : reussite !",
+        "On reste pro !"
+      ];
+      // Correction bug affichage double message : forcer le textContent Ã  vide et opacity 0 hors idle, et forcer repaint
+      if (ffMessage) {
+        ffMessage.textContent = '';
+        ffMessage.setAttribute('opacity', '0');
+        ffMessage.setAttribute('display', 'none');
+      }
+      const scrollY = window.scrollY || window.pageYOffset;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = Math.min(1, Math.max(0, scrollY / docHeight));
+      const rampHeight = 800 - 220; // SVG bar height - firefighter height
+      // Y position
+      const y = progress * rampHeight;
+      // Velocity (px/s)
+      const now = performance.now();
+      const dt = Math.max(16, now - lastTime);
+      velocity = (scrollY - lastScrollY) / (dt/1000);
+      lastScrollY = scrollY;
+      lastTime = now;
+
+      // --- SLIDE/CHUTE (descente) & CLIMB (remontÃ©e) ---
+      // Sliding down: body penchÃ© en arriÃ¨re, jambes "envolÃ©es", vent (skew, scale, blur, vibration)
+      // Climbing up: body penchÃ© en avant, jambes et bras alternent, effort, micro-mouvements
+      let mode = 'slide';
+      if (velocity < -30) mode = 'climb';
+      else if (velocity > 30) mode = 'slide';
+      else mode = 'idle';
+
+      // Position: centrÃ© sur la barre, translation verticale
+      group.setAttribute('transform', `translate(0,${y})`);
+      // Shadow follows Y, squashes with speed
+      if (shadow) {
+        shadow.setAttribute('cy', `${200 + y}`);
+        const shadowRx = 18 - Math.abs(velocity) * 0.012;
+        const shadowRy = 6 + Math.abs(velocity) * 0.01;
+        shadow.setAttribute('rx', `${Math.max(12, shadowRx)}`);
+        shadow.setAttribute('ry', `${Math.min(12, shadowRy)}`);
+        shadow.setAttribute('opacity', `${0.13 + Math.min(0.12, Math.abs(velocity)/2000)}`);
+      }
+
+      // Animation rÃ©aliste jambes/bras
+      const legLeft = legs.querySelector('#leg-left');
+      const legRight = legs.querySelector('#leg-right');
+      const armLeft = body.querySelector('#arm-left');
+      const armRight = body.querySelector('#arm-right');
+
+      // Micro-mouvements (rebond, vibration)
+      const micro = Math.sin(now/60) * 0.7 + Math.sin(now/37) * 0.5;
+      const micro2 = Math.cos(now/41) * 0.5;
+
+      if (mode === 'slide') {
+        // Descente rapide : jambes tendues vers le bas, parallÃ¨les, bras tendus vers le bas (vue de dos)
+        const wind = Math.min(1, Math.abs(velocity) / 1200);
+        const skew = 10 + wind * 18 + micro*1.2;
+        const scaleX = 1 + wind * 0.18 + micro2*0.01;
+        const blur = wind > 0.2 ? `blur(${wind*3.5}px)` : 'none';
+        const vib = wind > 0.2 ? Math.sin(now/8)*1.2 : 0;
+        body.setAttribute('transform', `skewY(${-skew}) scaleX(${scaleX}) translate(${vib},${micro*0.7})`);
+        // Jambes : tendues verticales, trÃ¨s lÃ©gÃ¨re oscillation gauche/droite (vue de dos)
+        if (legLeft && legRight) {
+          legLeft.setAttribute('transform', `translate(${micro*0.7},0)`);
+          legRight.setAttribute('transform', `translate(${-micro*0.7},0)`);
+        }
+        // OmbreÂ : toujours sous les pieds, bien centrÃ©e
+        if (shadow) {
+          shadow.setAttribute('cy', `${200 + y + 36}`); // 36 = hauteur jambe
+          shadow.setAttribute('cx', '40');
+          shadow.setAttribute('rx', `${18 - Math.abs(velocity) * 0.012}`);
+          shadow.setAttribute('ry', `${6 + Math.abs(velocity) * 0.01}`);
+          shadow.setAttribute('opacity', `${0.13 + Math.min(0.12, Math.abs(velocity)/2000)}`);
+        }
+        // Bras : tendus vers le bas, trÃ¨s lÃ©gÃ¨re oscillation
+        if (armLeft && armRight) {
+          armLeft.setAttribute('transform', `translate(${micro*0.5},0)`);
+          armRight.setAttribute('transform', `translate(${-micro*0.5},0)`);
+        }
+        // Casque : vibration
+        if (helmet) helmet.setAttribute('transform', `rotate(${vib*0.7} 40 72)`);
+        // Visor reflection: move with wind
+        if (visorReflection) visorReflection.setAttribute('opacity', `${0.18 + wind*0.25}`);
+        // Reflet dynamique sur le casque
+        if (helmetGloss) {
+          helmetGloss.setAttribute('opacity', `${0.10 + wind*0.18}`);
+          helmetGloss.setAttribute('x', `${32 + Math.sin(now/90)*2 + wind*2}`);
+        }
+        // Gouttes de sueur cachÃ©es
+        if (sweat1) sweat1.setAttribute('opacity', '0');
+        if (sweat2) sweat2.setAttribute('opacity', '0');
+        // Message cachÃ©
+        if (ffMessage) ffMessage.setAttribute('opacity', '0');
+        // Mains : lÃ©gers mouvements
+        if (handTop) handTop.setAttribute('transform', `scale(${1+wind*0.04},${1-wind*0.04})`);
+        if (handBottom) handBottom.setAttribute('transform', `scale(${1+wind*0.04},${1-wind*0.04})`);
+        group.style.filter = blur;
+      } else if (mode === 'climb') {
+        // OmbreÂ : toujours sous les pieds, bien centrÃ©e
+        if (shadow) {
+          shadow.setAttribute('cy', `${200 + y + 36}`);
+          shadow.setAttribute('cx', '40');
+          shadow.setAttribute('rx', `${18 - Math.abs(velocity) * 0.012}`);
+          shadow.setAttribute('ry', `${6 + Math.abs(velocity) * 0.01}`);
+          shadow.setAttribute('opacity', `${0.13 + Math.min(0.12, Math.abs(velocity)/2000)}`);
+        }
+        // OmbreÂ : toujours sous les pieds, bien centrÃ©e
+        if (shadow) {
+          shadow.setAttribute('cy', `${200 + y + 36}`);
+          shadow.setAttribute('cx', '40');
+          shadow.setAttribute('rx', '18');
+          shadow.setAttribute('ry', '6');
+          shadow.setAttribute('opacity', '0.13');
+        }
+        // RemontÃ©e : jambes et bras alternent verticalement (vue de dos), corps penchÃ©, effort, micro-mouvements
+        const effort = Math.min(1, Math.abs(velocity) / 900);
+        const skew = -12 - effort * 10 + micro*0.7;
+        const scaleX = 1 - effort * 0.08 + micro2*0.01;
+        // Mouvement de grimpe : jambes et bras alternent verticalement (vue de dos)
+        const t = now/180;
+        if (legLeft && legRight) {
+          legLeft.setAttribute('transform', `translate(0,${Math.sin(t)*8 + micro*1.2})`);
+          legRight.setAttribute('transform', `translate(0,${-Math.sin(t)*8 - micro*1.2})`);
+        }
+        if (armLeft && armRight) {
+          armLeft.setAttribute('transform', `translate(0,${Math.cos(t)*6 + micro*0.8})`);
+          armRight.setAttribute('transform', `translate(0,${-Math.cos(t)*6 - micro*0.8})`);
+        }
+        // Casque : penchÃ©, micro-mouvement
+        if (helmet) helmet.setAttribute('transform', `rotate(${-8 + micro*1.2} 40 72)`);
+        // Visor reflection: intensitÃ© selon effort
+        if (visorReflection) visorReflection.setAttribute('opacity', `${0.18 + effort*0.18}`);
+        // Reflet dynamique sur le casque
+        if (helmetGloss) {
+          helmetGloss.setAttribute('opacity', `${0.10 + effort*0.22}`);
+          helmetGloss.setAttribute('x', `${32 + Math.sin(now/60)*2 + effort*2}`);
+        }
+        // Gouttes de sueur visibles si effort important
+        if (sweat1) sweat1.setAttribute('opacity', `${effort > 0.5 ? 0.5 + Math.abs(Math.sin(now/120))*0.4 : 0}`);
+        if (sweat2) sweat2.setAttribute('opacity', `${effort > 0.7 ? 0.7 + Math.abs(Math.cos(now/90))*0.3 : 0}`);
+        // Message cachÃ©
+        if (ffMessage) ffMessage.setAttribute('opacity', '0');
+        // Mains : grip serrÃ© (squeeze)
+        if (handTop) handTop.setAttribute('transform', `scale(${1.08+effort*0.08},${0.92-effort*0.08})`);
+        if (handBottom) handBottom.setAttribute('transform', `scale(${1.08+effort*0.08},${0.92-effort*0.08})`);
+        body.setAttribute('transform', `skewY(${-skew}) scaleX(${scaleX}) translate(${micro*0.7},${micro2*0.7})`);
+        group.style.filter = 'none';
+      } else {
+        // Ã€ l'arrÃªt : position neutre, micro-breath (vertical uniquement)
+        body.setAttribute('transform', `skewY(${micro*0.5}) scaleX(${1+micro2*0.005}) translate(0,${Math.abs(micro)*0.7})`);
+        if (legLeft && legRight) {
+          legLeft.setAttribute('transform', `translate(0,${micro*1.2})`);
+          legRight.setAttribute('transform', `translate(0,${-micro*1.2})`);
+        }
+        if (armLeft && armRight) {
+          armLeft.setAttribute('transform', `translate(0,${micro*1.1})`);
+          armRight.setAttribute('transform', `translate(0,${-micro*1.1})`);
+        }
+        if (helmet) helmet.setAttribute('transform', `rotate(${micro*0.7} 40 72)`);
+        if (visorReflection) visorReflection.setAttribute('opacity', '0.18');
+        if (helmetGloss) {
+          helmetGloss.setAttribute('opacity', '0.10');
+          helmetGloss.setAttribute('x', `${32 + Math.sin(now/120)*1.5}`);
+        }
+        // Gouttes de sueur cachÃ©es
+        if (sweat1) sweat1.setAttribute('opacity', '0');
+        if (sweat2) sweat2.setAttribute('opacity', '0');
+        // Message SVG visible, changeant rÃ©guliÃ¨rement
+        if (ffMessage) {
+          ffMessage.textContent = messages[Math.floor((now/2000)%messages.length)];
+          ffMessage.setAttribute('opacity', '1');
+          ffMessage.setAttribute('display', 'inline');
+        }
+        if (handTop) handTop.setAttribute('transform', 'scale(1,1)');
+        if (handBottom) handBottom.setAttribute('transform', 'scale(1,1)');
+        group.style.filter = 'none';
+      }
+
+      // Gyro alarm if velocity high (descente rapide)
+      if (Math.abs(velocity) > 400) {
+        group.classList.add('alarm');
+      } else {
+        group.classList.remove('alarm');
+      }
+
+      // Bubble marketing (inchangÃ©)
+      if (Math.abs(velocity) < 10) {
+        // Show bubble for current section, but fade in/out instead of display block/none
+        const current = getCurrentSection(scrollY);
+        bubble.textContent = current.text;
+        bubble.style.display = 'block';
+        bubble.style.opacity = '1';
+        bubble.style.filter = 'blur(0)';
+        if (bubbleTimeout) clearTimeout(bubbleTimeout);
+      } else {
+        // Make bubble semi-visible and blurred instead of hiding
+        bubble.style.opacity = '0.25';
+        bubble.style.filter = 'blur(3px)';
+        if (bubbleTimeout) clearTimeout(bubbleTimeout);
+        bubbleTimeout = setTimeout(() => { bubble.style.display = 'block'; }, 400);
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  // ...existing code...
+  initIgnition();
+  initHeader();
+  initTypewriter();
+  initPortfolioModal();
+  initContactForm();
+  initScrollAnimations();
+  init3DReviewsCarousel();
+  initValueCardGlow();
+  initInterventionCTA();
+  if (window.matchMedia("(pointer: fine)").matches) {
+    initUltimateCursor();
+  }
+  initFirefighterRamp();
+});
+  </script>
+</html>

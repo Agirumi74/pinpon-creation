@@ -1,0 +1,4 @@
+id,platform,label,url,icon,order,visible,title
+1,Instagram,Instagram,https://instagram.com/zatchouli,openmoji:instagram,1,true,Instagram
+2,Facebook,Facebook,https://facebook.com/zatchouli,openmoji:facebook,2,true,Facebook
+3,YouTube,YouTube,https://youtube.com/zatchouli,openmoji:youtube,3,true,YouTube

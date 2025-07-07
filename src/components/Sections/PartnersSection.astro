@@ -1,0 +1,87 @@
+---
+import { getCollection } from "astro:content";
+
+// TypeScript types
+
+type PartnersSection = {
+  id: string | number;
+  heading: string;
+  subheading: string;
+  description: string;
+  order?: number;
+  visible?: boolean;
+};
+
+type PartnerLogo = {
+  id: string | number;
+  logo: string;
+  alt: string;
+  order?: number;
+  partnersSectionId?: string | number;
+};
+
+// Fallbacks
+let partnersSection: PartnersSection = {
+  id: 1,
+  heading: "Ils me font confiance",
+  subheading: "Confiance",
+  description: "Des collaborations fructueuses basées sur la rigueur et l'efficacité.",
+  order: 1,
+  visible: true,
+};
+
+let partnerLogos: PartnerLogo[] = [
+  {
+    id: 1,
+    logo: "https://cataas.com/cat",
+    alt: "Logo Transistor",
+    order: 1,
+    partnersSectionId: 1,
+  },
+];
+
+try {
+  const sectionData = await getCollection("PartnersSection");
+  if (sectionData && sectionData[0]?.data) {
+    partnersSection = { ...partnersSection, ...sectionData[0].data };
+  }
+} catch (e) {}
+
+try {
+  const logosData = await getCollection("PartnerLogos");
+  if (logosData && logosData.length > 0) {
+    partnerLogos = logosData.map((l) => l.data)
+      .filter(l => l.partnersSectionId == partnersSection.id)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    if (partnerLogos.length === 0) {
+      partnerLogos = logosData.map((l) => l.data).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+  }
+} catch (e) {}
+---
+<section id="partners" class="section">
+    <div class="container">
+        <div class="section-intro">
+            <h2 class="section-title-main scroll-reveal up">
+              <span class="section-title-sub">{partnersSection.subheading}</span>
+              {partnersSection.heading}
+            </h2>
+            <p class="section-description scroll-reveal up" style="transition-delay: 100ms;">{partnersSection.description}</p>
+        </div>
+    </div>
+    <div class="marquee">
+        <div class="marquee-content">
+            {partnerLogos.map((logo) => (
+              <div class="partner-logo-container">
+                <img class="partner-logo" src={logo.logo} alt={logo.alt} />
+              </div>
+            ))}
+            {/* Duplicate for seamless loop */}
+            {partnerLogos.map((logo) => (
+              <div class="partner-logo-container">
+                <img class="partner-logo" src={logo.logo} alt={logo.alt} />
+              </div>
+            ))}
+        </div>
+    </div>
+</section>

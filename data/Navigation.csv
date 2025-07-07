@@ -1,0 +1,12 @@
+id,label,anchor,url,order,location,visible,icon,ariaLabel
+1,Intervention,home,#home,1,header,true,,Aller à la section Intervention
+2,Qui suis-je ?,bio,#bio,2,header,true,,Aller à la section Bio
+3,Protocole,about,#about,3,header,true,,Aller à la section Protocole
+4,Dossiers,portfolio,#portfolio,4,header,true,,Aller à la section Dossiers
+5,Partenaires,partners,#partners,5,header,true,,Aller à la section Partenaires
+6,Avis,reviews,#reviews,6,header,true,,Aller à la section Avis
+7,Contact,contact,#contact,7,header,true,,Aller à la section Contact
+8,Mentions légales,mentions-legales,/mentions-legales,8,footer,true,,
+9,Politique de confidentialité,confidentialite,/mentions-legales/#politique-confidentialite,9,footer,true,,
+10,CGV,cgv,/mentions-legales/#cgv,10,footer,true,,
+11,Plan du site,plan-du-site,/plan-du-site,11,footer,true,,

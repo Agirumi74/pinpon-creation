@@ -1,0 +1,109 @@
+---
+import { getCollection } from "astro:content";
+
+type AboutSection = {
+  id: string | number;
+  heading: string;
+  subheading: string;
+  description: string;
+  order?: number;
+  visible?: boolean;
+};
+
+type Value = {
+  id: string | number;
+  valueNumber: number;
+  valueTitle: string;
+  valueDescription: string;
+  icon?: string;
+  order?: number;
+  aboutSectionId?: string | number;
+};
+
+// Fallbacks
+let about: AboutSection = {
+  id: 1,
+  heading: "Protocole d'Intervention",
+  subheading: "Protocole",
+  description: "Chaque mission est menée avec une méthodologie claire, garantissant un résultat optimal.",
+  order: 1,
+  visible: true,
+};
+
+let values: Value[] = [
+  {
+    id: 1,
+    valueNumber: 1,
+    valueTitle: "Rigueur",
+    valueDescription: "Chaque pixel et chaque ligne de code sont pensés pour un résultat impeccable et une fiabilité à long terme.",
+    icon: undefined,
+    order: 1,
+    aboutSectionId: 1,
+  },
+  {
+    id: 2,
+    valueNumber: 2,
+    valueTitle: "Efficacité",
+    valueDescription: "Je conçois des solutions directes et intuitives qui répondent rapidement et clairement à vos objectifs.",
+    icon: undefined,
+    order: 2,
+    aboutSectionId: 1,
+  },
+  {
+    id: 3,
+    valueNumber: 3,
+    valueTitle: "Esprit d'équipe",
+    valueDescription: "Votre projet est notre projet. L'écoute et la collaboration sont au cœur de ma méthode pour garantir votre succès.",
+    icon: undefined,
+    order: 3,
+    aboutSectionId: 1,
+  },
+];
+
+try {
+  const aboutSection = await getCollection("AboutSection") as Array<{ data: AboutSection }>;
+  if (aboutSection && aboutSection[0]?.data) {
+    about = { ...about, ...aboutSection[0].data };
+  }
+} catch (e) {}
+
+try {
+  const valuesData = await getCollection("Values") as Array<{ data: Value }>;
+  if (valuesData && valuesData.length > 0) {
+    values = valuesData.map((v) => v.data)
+      .filter(v => v.aboutSectionId == about.id)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    if (values.length === 0) {
+      values = valuesData.map((v) => v.data).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+  }
+} catch (e) {}
+---
+<section id="about" class="section">
+    <div class="container">
+        <div class="section-intro">
+            <h2 class="section-title-main scroll-reveal up">
+              <span class="section-title-sub">{about.subheading}</span>
+              {about.heading}
+            </h2>
+            <p class="section-description scroll-reveal up" style="transition-delay: 100ms;">{about.description}</p>
+        </div>
+        <div id="values-grid" class="stagger-group">
+            {values.map((value, i) => (
+              <div class="value-card scroll-reveal up" style={i > 0 ? `transition-delay: ${i * 150}ms;` : undefined}>
+                  <div class="value-card-glow"></div>
+                  <div class="value-card-header">
+                      <div class="value-card-number">{String(value.valueNumber).padStart(2, '0')}</div>
+                      <h3 class="value-card-title">{value.valueTitle}</h3>
+                  </div>
+                  <p class="value-card-description">{value.valueDescription}</p>
+              </div>
+            ))}
+        </div>
+    </div>
+      <div class="shape-divider bottom">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31.74,902.24,52.83,970.6,72.77c72.35,21.55,132.23,34.42,201.8,37.29,70.56,2.99,139.07-11.21,200.34-36.68,61.32-25.48,58.34-54.43,58.34-54.43V0H0V45.34C0,45.34,19.33,21.38,321.39,56.44Z" style="fill: var(--light-bg)"></path>
+        </svg>
+    </div>
+</section>

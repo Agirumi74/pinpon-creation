@@ -1,0 +1,452 @@
+---
+import { getCollection } from "astro:content";
+
+// TypeScript types
+
+type PortfolioSection = {
+  id: string | number;
+  heading: string;
+  subheading: string;
+  description: string;
+  order?: number;
+  visible?: boolean;
+};
+
+type Project = {
+  id: string | number;
+  title: string;
+  category: string;
+  cover: string;
+  coverAlt: string;
+  description: string;
+  url?: string;
+  order?: number;
+  visible?: boolean;
+  portfolioSectionId?: string | number;
+};
+
+type ProjectGalleryImage = {
+  id: string | number;
+  projectId: string | number;
+  imageUrl: string;
+  imageAlt: string;
+  order?: number;
+};
+
+// Fallbacks
+let portfolioSection: PortfolioSection = {
+  id: 1,
+  heading: "de Mission",
+  subheading: "Dossiers",
+  description: "Rapports d'opérations menées avec succès. Chaque dossier représente une solution déployée sur le terrain.",
+  order: 1,
+  visible: true,
+};
+
+let projects: Project[] = [
+  {
+    id: 1,
+    title: "Site Vitrine Artisan",
+    category: "Web Design + Développement",
+    cover: "https://images.unsplash.com/photo-1556912173-35f35c659690?q=80&w=800&auto=format&fit=crop",
+    coverAlt: "Photo d'un site vitrine artisan",
+    description: "Déploiement d'une plateforme digitale pour un artisan local...",
+    url: "#",
+    order: 1,
+    visible: true,
+    portfolioSectionId: 1,
+  },
+];
+
+let galleries: ProjectGalleryImage[] = [
+  {
+    id: 1,
+    projectId: 1,
+    imageUrl: "https://img1.jpg",
+    imageAlt: "Vue d'ensemble",
+    order: 1,
+  },
+  {
+    id: 2,
+    projectId: 1,
+    imageUrl: "https://img2.jpg",
+    imageAlt: "Page d'accueil",
+    order: 2,
+  },
+];
+
+try {
+  const sectionData = await getCollection("PortfolioSection");
+  if (sectionData && sectionData[0]?.data) {
+    portfolioSection = { ...portfolioSection, ...sectionData[0].data };
+  }
+} catch (e) {}
+
+try {
+  const projectsData = await getCollection("Projects");
+  if (projectsData && projectsData.length > 0) {
+    projects = projectsData.map((p) => ({
+      id: p.data.id ?? 0,
+      title: p.data.title ?? '',
+      category: p.data.category ?? '',
+      cover: p.data.cover ?? '',
+      coverAlt: p.data.coverAlt ?? '',
+      description: p.data.description ?? '',
+      url: p.data.url ?? '',
+      order: p.data.order ?? 0,
+      visible: p.data.visible ?? true,
+      portfolioSectionId: p.data.portfolioSectionId ?? 1,
+    }))
+      .filter(p => p.portfolioSectionId == portfolioSection.id && (p.visible ?? true))
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    if (projects.length === 0) {
+      projects = projectsData.map((p) => ({
+        id: p.data.id ?? 0,
+        title: p.data.title ?? '',
+        category: p.data.category ?? '',
+        cover: p.data.cover ?? '',
+        coverAlt: p.data.coverAlt ?? '',
+        description: p.data.description ?? '',
+        url: p.data.url ?? '',
+        order: p.data.order ?? 0,
+        visible: p.data.visible ?? true,
+        portfolioSectionId: p.data.portfolioSectionId ?? 1,
+      })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+  }
+} catch (e) {}
+
+try {
+  const galleriesData = await getCollection("ProjectGallery");
+  if (galleriesData && galleriesData.length > 0) {
+    galleries = galleriesData.map((g) => ({
+      id: g.data.id ?? 0,
+      projectId: g.data.projectId ?? 0,
+      imageUrl: g.data.imageUrl ?? '',
+      imageAlt: g.data.imageAlt ?? '',
+      order: g.data.order ?? 0,
+    })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }
+} catch (e) {}
+---
+<section id="portfolio" class="section">
+    <div class="container">
+        <div class="section-intro">
+            <h2 class="section-title-main scroll-reveal up">
+              <span class="section-title-sub">{portfolioSection.subheading}</span>
+              {portfolioSection.heading}
+            </h2>
+            <p class="section-description scroll-reveal up" style="transition-delay: 100ms;">{portfolioSection.description}</p>
+        </div>
+        <div id="projects-grid" class="stagger-group">
+            {projects.map((project) => {
+              const projectGallery = galleries.filter(g => g.projectId == project.id);
+              // Prépare les data-attributes pour la galerie (urls et alts séparés par |)
+              const galleryUrls = projectGallery.map(img => img.imageUrl).join('|');
+              const galleryAlts = projectGallery.map(img => img.imageAlt).join('|');
+              return (
+                <div
+                  class="project-card scroll-reveal up"
+                  data-project-id={project.id}
+                  data-project-title={project.title}
+                  data-project-category={project.category}
+                  data-project-image={project.cover}
+                  data-project-image-alt={project.coverAlt}
+                  data-project-description={project.description}
+                  data-project-url={project.url || ''}
+                  data-project-gallery-urls={galleryUrls}
+                  data-project-gallery-alts={galleryAlts}
+                >
+                  <img src={project.cover} alt={project.coverAlt} />
+                  <div class="project-card-overlay">
+                    <div>
+                      <p class="project-card-category">{project.category}</p>
+                      <h3 class="project-card-title">{project.title}</h3>
+                    </div>
+                    <span class="project-card-link">Consulter le dossier &rarr;</span>
+                  </div>
+                  <div class="project-card-content">
+                    <p class="project-card-category">{project.category}</p>
+                    <h3 class="project-card-title">{project.title}</h3>
+                    <p>{project.description}</p>
+                    {projectGallery.length > 0 && (
+                      <div class="project-gallery" style="display:none">
+                        {projectGallery.map((img) => (
+                          <img src={img.imageUrl} alt={img.imageAlt} class="project-gallery-image" />
+                        ))}
+                      </div>
+                    )}
+                    {project.url && (
+                      <a href={project.url} target="_blank" rel="noopener noreferrer" class="magnetic-link">
+                        Voir le site
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+    </div>
+    {/* Modal remains unchanged, can be enhanced for dynamic content if needed */}
+    <div id="project-modal-backdrop">
+        <div id="project-modal">
+          <img id="modal-image" src="" alt="" />
+          <div id="modal-content">
+             <p id="modal-category"></p>
+             <h2 id="modal-title"></h2>
+             <p id="modal-description"></p>
+             <div id="modal-gallery" class="modal-gallery-carousel">
+               <!-- Les images de la galerie du projet sélectionné seront injectées ici par JS -->
+             </div>
+             <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" class="magnetic-link">
+                Voir le site
+            </a>
+          </div>
+          <button id="modal-close-button" class="magnetic-link" aria-label="Fermer le détail du projet">
+            <svg style="width: 1.5rem; height: 1.5rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+    </div>
+</section>
+<style is:inline>
+/* --- MODAL GALLERY CAROUSEL --- */
+#project-modal-backdrop {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+#project-modal {
+  background: #fff;
+  border-radius: 1.2rem;
+  max-width: 540px;
+  width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  position: relative;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  animation: modalIn 0.25s cubic-bezier(.4,2,.6,1) both;
+}
+@keyframes modalIn {
+  from { transform: translateY(40px) scale(0.98); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+#modal-image {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 0.7rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+#modal-content {
+  margin-bottom: 1.2rem;
+}
+#modal-category {
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+#modal-title {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+}
+#modal-description {
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+#modal-link {
+  display: inline-block;
+  margin-top: 1.1rem;
+  font-weight: 600;
+  color: #e63946;
+  text-decoration: none;
+  border-bottom: 2px solid #e63946;
+  transition: color 0.15s;
+}
+#modal-link:hover {
+  color: #b71c1c;
+  border-bottom-color: #b71c1c;
+}
+#modal-link:focus {
+  outline: 2px solid #e63946;
+  outline-offset: 2px;
+}
+#modal-close-button {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.15s;
+  z-index: 2;
+}
+#modal-close-button:hover {
+  color: #e63946;
+}
+.modal-gallery-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.2rem 0 0.5rem 0;
+  min-height: 120px;
+  position: relative;
+}
+.modal-gallery-image {
+  max-width: 340px;
+  max-height: 180px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  background: #f6f6f6;
+  display: none;
+  margin: 0 auto;
+}
+.modal-gallery-image.active {
+  display: block;
+}
+.modal-gallery-prev, .modal-gallery-next {
+  background: #fff;
+  border: 1.5px solid #e63946;
+  color: #e63946;
+  border-radius: 50%;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.15s, color 0.15s;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.modal-gallery-prev { left: 0; }
+.modal-gallery-next { right: 0; }
+.modal-gallery-prev:hover, .modal-gallery-next:hover {
+  background: #e63946;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  #project-modal { padding: 1rem 0.5rem; }
+  #modal-image { max-height: 140px; }
+  .modal-gallery-image { max-width: 98vw; max-height: 110px; }
+}
+</style>
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function () {
+  const modalBackdrop = document.getElementById('project-modal-backdrop');
+  const modal = document.getElementById('project-modal');
+  const modalImage = document.getElementById('modal-image');
+  const modalCategory = document.getElementById('modal-category');
+  const modalTitle = document.getElementById('modal-title');
+  const modalDescription = document.getElementById('modal-description');
+  const modalGallery = document.getElementById('modal-gallery');
+  const modalLink = document.getElementById('modal-link');
+  const closeButton = document.getElementById('modal-close-button');
+
+  let currentIndex = 0;
+  let galleryImages = [];
+
+  function openModal(card) {
+    modalImage.src = card.getAttribute('data-project-image') || '';
+    modalImage.alt = card.getAttribute('data-project-image-alt') || '';
+    modalCategory.textContent = card.getAttribute('data-project-category') || '';
+    modalTitle.textContent = card.getAttribute('data-project-title') || '';
+    modalDescription.textContent = card.getAttribute('data-project-description') || '';
+    const url = card.getAttribute('data-project-url') || '';
+    if (url && url !== '#' && url.trim() !== '') {
+      modalLink.style.display = 'inline-block';
+      modalLink.href = url;
+      modalLink.setAttribute('tabindex', '0');
+    } else {
+      modalLink.style.display = 'none';
+      modalLink.setAttribute('tabindex', '-1');
+    }
+    // Gère la galerie
+    const galleryUrls = (card.getAttribute('data-project-gallery-urls') || '').split('|').filter(Boolean);
+    const galleryAlts = (card.getAttribute('data-project-gallery-alts') || '').split('|').filter(Boolean);
+    modalGallery.innerHTML = '';
+    galleryImages = [];
+    if (galleryUrls.length > 0) {
+      galleryImages = galleryUrls.map((url, i) => ({ url, alt: galleryAlts[i] || '' }));
+      // Ajoute les images dans le DOM
+      galleryImages.forEach((img, i) => {
+        const el = document.createElement('img');
+        el.src = img.url;
+        el.alt = img.alt;
+        el.className = 'modal-gallery-image' + (i === 0 ? ' active' : '');
+        modalGallery.appendChild(el);
+      });
+      // Ajoute les boutons de navigation si plusieurs images
+      if (galleryImages.length > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'modal-gallery-prev';
+        prevBtn.innerHTML = '&larr;';
+        prevBtn.onclick = function (e) { e.stopPropagation(); showImage(currentIndex - 1); };
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'modal-gallery-next';
+        nextBtn.innerHTML = '&rarr;';
+        nextBtn.onclick = function (e) { e.stopPropagation(); showImage(currentIndex + 1); };
+        modalGallery.appendChild(prevBtn);
+        modalGallery.appendChild(nextBtn);
+      }
+      currentIndex = 0;
+    }
+    modalBackdrop.style.display = 'flex';
+    document.body.classList.add('modal-open');
+  }
+
+  function closeModal() {
+    modalBackdrop.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    modalGallery.innerHTML = '';
+    currentIndex = 0;
+    galleryImages = [];
+  }
+
+  function showImage(idx) {
+    if (!galleryImages.length) return;
+    currentIndex = (idx + galleryImages.length) % galleryImages.length;
+    const imgs = modalGallery.querySelectorAll('.modal-gallery-image');
+    imgs.forEach((img, i) => {
+      img.classList.toggle('active', i === currentIndex);
+    });
+  }
+
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('click', function () {
+      openModal(card);
+    });
+  });
+  closeButton.addEventListener('click', function (e) {
+    e.stopPropagation();
+    closeModal();
+  });
+  modalBackdrop.addEventListener('click', function (e) {
+    if (e.target === modalBackdrop) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (modalBackdrop.style.display === 'flex') {
+      if (e.key === 'Escape') closeModal();
+      if (galleryImages.length > 1) {
+        if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+        if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+      }
+    }
+  });
+});
+</script>

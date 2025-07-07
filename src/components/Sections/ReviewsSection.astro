@@ -1,0 +1,134 @@
+---
+
+import { getCollection } from 'astro:content';
+
+type ReviewsSectionType = {
+  heading: string;
+  subheading: string;
+  description: string;
+  order: number;
+  id: string;
+};
+
+type Review = {
+  id: string;
+  author: string;
+  avatar: string;
+  date: string;
+  rating: number;
+  text: string;
+  order: number;
+  sectionId: string;
+};
+
+
+const reviewsSectionFallback: ReviewsSectionType = {
+  heading: 'Ce que disent mes clients',
+  subheading: 'Avis',
+  description: "La satisfaction de mes clients est ma meilleure carte de visite. Voici leurs retours d'expérience.",
+  order: 1,
+  id: 'reviews-section',
+};
+
+const reviewsFallback: Review[] = [
+  {
+    id: '1',
+    author: 'Jean Dupont',
+    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
+    date: 'Il y a 2 semaines',
+    rating: 5,
+    text: 'Un professionnalisme exemplaire ! Amaury a su comprendre mes besoins et a livré un site web magnifique, rapide et efficace. La communication a été fluide tout au long du projet.',
+    order: 1,
+    sectionId: 'reviews-section',
+  },
+  {
+    id: '2',
+    author: 'Marie Leroy',
+    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704e',
+    date: 'Il y a 1 mois',
+    rating: 5,
+    text: "Excellent travail ! Mon nouveau site vitrine pour mon activité d'artisan est parfait. Simple, élégant et très facile à prendre en main. Amaury est à l'écoute et plein de bonnes idées.",
+    order: 2,
+    sectionId: 'reviews-section',
+  },
+  {
+    id: '3',
+    author: 'Lucas Martin',
+    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704f',
+    date: 'Il y a 3 mois',
+    rating: 5,
+    text: 'Efficace et rigoureux, comme promis ! Le projet a été mené tambour battant sans jamais sacrifier la qualité. Très satisfait du résultat final, qui correspond parfaitement à mes attentes.',
+    order: 3,
+    sectionId: 'reviews-section',
+  },
+];
+
+let reviewsSection: ReviewsSectionType = reviewsSectionFallback;
+let reviews: Review[] = reviewsFallback;
+
+try {
+  // Get section data from collection and map to our type
+  const sectionEntries = await getCollection('ReviewsSection');
+  const sectionData = sectionEntries[0]?.data;
+  if (sectionData) {
+    reviewsSection = {
+      heading: sectionData.heading ?? reviewsSectionFallback.heading,
+      subheading: sectionData.subheading ?? reviewsSectionFallback.subheading,
+      description: sectionData.description ?? reviewsSectionFallback.description,
+      order: typeof sectionData.order === 'number' ? sectionData.order : reviewsSectionFallback.order,
+      id: String(sectionData.id ?? reviewsSectionFallback.id),
+    };
+  }
+  // Get reviews and map to our type (with correct field mapping)
+  const allReviews = (await getCollection('Reviews')).map(entry => ({
+    id: String(entry.data.id ?? ''),
+    author: entry.data.author ?? '',
+    avatar: entry.data.avatar ?? '',
+    date: entry.data.date ?? '',
+    rating: entry.data.stars ?? 5,
+    text: entry.data.content ?? '',
+    order: typeof entry.data.order === 'number' ? entry.data.order : 0,
+    sectionId: String(entry.data.reviewsSectionId ?? ''),
+  }));
+  const filtered = allReviews.filter(r => r.sectionId === reviewsSection.id);
+  reviews = (filtered.length > 0 ? filtered : reviewsFallback).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+} catch (e) {
+  // fallback already set
+}
+---
+<section id="reviews" class="section">
+  <div class="container">
+    <div class="section-intro">
+      <h2 class="section-title-main scroll-reveal up">
+        <span class="section-title-sub">{reviewsSection.subheading}</span>
+        {reviewsSection.heading}
+      </h2>
+      <p class="section-description scroll-reveal up" style="transition-delay: 100ms;">{reviewsSection.description}</p>
+    </div>
+    <div class="carousel-container scroll-reveal zoom">
+      <div id="reviews-carousel">
+        {reviews.map((review, i) => (
+          <div class="review-card" data-index={i}>
+            <div class="review-header">
+              <img src={review.avatar} alt={review.author} class="review-avatar" />
+              <div>
+                <h3 class="review-author">{review.author}</h3>
+                <p class="review-date">{review.date}</p>
+              </div>
+            </div>
+            <div class="review-stars">
+              {[...Array(review.rating ?? 5)].map(() => (
+                <svg fill="currentColor" viewBox="0 0 24 24" style="color:#facc15;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
+              ))}
+            </div>
+            <p class="review-text">{review.text}</p>
+          </div>
+        ))}
+      </div>
+      <div class="carousel-nav">
+        <button id="prev-review" title="Avis précédent">&larr;</button>
+        <button id="next-review" title="Avis suivant">&rarr;</button>
+      </div>
+    </div>
+  </div>
+</section>
