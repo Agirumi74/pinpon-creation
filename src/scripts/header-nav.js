@@ -1,117 +1,15 @@
----
-import { getCollection } from 'astro:content';
+// Header & Navigation logic for Pinpon Création
+// Handles header, navigation links, mobile menu, and color adaptation
 
-type SiteSettings = {
-  siteTitle: string;
-  siteDescription: string;
-  logoUrl: string;
-  logoAlt: string;
-  faviconUrl?: string;
-  faviconAlt?: string;
-};
-
-const siteSettingsFallback: SiteSettings = {
-  siteTitle: 'Pinpon Création',
-  siteDescription: '',
-  logoUrl: '/images/logo.png',
-  logoAlt: 'Logo Pinpon Création',
-  faviconUrl: '/images/favicon.svg',
-  faviconAlt: 'Favicon Pinpon',
-};
-
-let siteSettings: SiteSettings = siteSettingsFallback;
-try {
-  const entries = await getCollection('SiteSettings');
-  const data = entries[0]?.data;
-  if (data) {
-    siteSettings = {
-      siteTitle: data.siteTitle ?? siteSettingsFallback.siteTitle,
-      siteDescription: data.siteDescription ?? siteSettingsFallback.siteDescription,
-      logoUrl: data.logoUrl ?? siteSettingsFallback.logoUrl,
-      logoAlt: data.logoAlt ?? siteSettingsFallback.logoAlt,
-      faviconUrl: data.faviconUrl ?? siteSettingsFallback.faviconUrl,
-      faviconAlt: data.faviconAlt ?? siteSettingsFallback.faviconAlt,
-    };
+let headerNavInitialized = false;
+export function initHeaderAndNav() {
+  if (headerNavInitialized) {
+    console.warn('initHeaderAndNav already called, skipping duplicate initialization.');
+    return;
   }
-} catch (e) {
-  siteSettings = siteSettingsFallback;
-}
-
-type NavigationItem = {
-  id: string;
-  label: string;
-  anchor: string;
-  url: string;
-  order: number;
-  location: string;
-  visible: boolean;
-  icon?: string;
-  ariaLabel?: string;
-};
-
-const navigationFallback: NavigationItem[] = [
-  { id: '1', label: 'Intervention', anchor: 'home', url: '#home', order: 1, location: 'header', visible: true, ariaLabel: 'Aller à la section Intervention' },
-  { id: '2', label: 'Qui suis-je ?', anchor: 'bio', url: '#bio', order: 2, location: 'header', visible: true, ariaLabel: 'Aller à la section Bio' },
-  { id: '3', label: 'Protocole', anchor: 'about', url: '#about', order: 3, location: 'header', visible: true, ariaLabel: 'Aller à la section Protocole' },
-  { id: '4', label: 'Dossiers', anchor: 'portfolio', url: '#portfolio', order: 4, location: 'header', visible: true, ariaLabel: 'Aller à la section Dossiers' },
-  { id: '5', label: 'Partenaires', anchor: 'partners', url: '#partners', order: 5, location: 'header', visible: true, ariaLabel: 'Aller à la section Partenaires' },
-  { id: '6', label: 'Avis', anchor: 'reviews', url: '#reviews', order: 6, location: 'header', visible: true, ariaLabel: 'Aller à la section Avis' },
-  { id: '7', label: 'Contact', anchor: 'contact', url: '#contact', order: 7, location: 'header', visible: true, ariaLabel: 'Aller à la section Contact' },
-];
-
-let navigation: NavigationItem[] = [];
-try {
-  const navEntries = await getCollection('Navigation');
-  navigation = navEntries
-    .map(entry => ({
-      id: String(entry.data.id ?? ''),
-      label: entry.data.label ?? '',
-      anchor: entry.data.anchor ?? '',
-      url: entry.data.url ?? '',
-      order: typeof entry.data.order === 'number' ? entry.data.order : 0,
-      location: entry.data.location ?? '',
-      visible: entry.data.visible === undefined ? true : String(entry.data.visible) === 'true',
-      icon: entry.data.icon,
-      ariaLabel: entry.data.ariaLabel,
-    }))
-    .filter(item => item.location === 'header' && item.visible)
-    .sort((a, b) => a.order - b.order);
-  if (navigation.length === 0) navigation = navigationFallback;
-} catch (e) {
-  navigation = navigationFallback;
-}
----
-<header id="main-header">
-  <div class="container">
-    <div class="header-content">
-      <a href="#home" class="header-logo">
-        <img src={siteSettings.logoUrl} alt={siteSettings.logoAlt} class="header-logo" />
-      </a>
-      <nav id="desktop-nav">
-        {navigation.map(item => (
-          <a href={item.url} class="nav-link magnetic-link" aria-label={item.ariaLabel}>{item.label}</a>
-        ))}
-      </nav>
-      <button id="mobile-menu-button" title="Ouvrir le menu">
-        <svg id="menu-open-icon" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.75rem; height: 1.75rem;">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-        </svg>
-        <svg id="menu-close-icon" class="h-7 w-7 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.75rem; height: 1.75rem;">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-  </div>
-  <div id="mobile-menu-overlay" class="mobile-menu-overlay hidden" tabindex="-1" aria-hidden="true"></div>
-  <nav id="mobile-menu" class="hidden" aria-label="Menu mobile" aria-modal="true" role="dialog">
-    {navigation.map(item => (
-      <a href={item.url} class="nav-link-mobile" aria-label={item.ariaLabel}>{item.label}</a>
-    ))}
-  </nav>
-</header>
-
-<script is:inline>
-const qs = (selector) => document.querySelector(selector);
+  headerNavInitialized = true;
+  console.log('initHeaderAndNav running...');
+  const qs = (selector) => document.querySelector(selector);
   const qsa = (selector) => document.querySelectorAll(selector);
   const header = qs('#main-header');
   const mobileMenuButton = qs('#mobile-menu-button');
@@ -294,4 +192,4 @@ const qs = (selector) => document.querySelector(selector);
   sectionElements.forEach(section => headerObserver.observe(section));
   // Default mode
   setHeaderMode('light');
-</script>
+}

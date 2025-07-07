@@ -1,0 +1,295 @@
+<!-- Pompier rappel animation -->
+<div id="firefighter-ramp" aria-hidden="true">
+    <svg id="firefighter-svg" width="80" height="100vh" viewBox="0 0 80 800" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:100vh; width:80px;">
+    <!-- Metal Ramp (bar) -->
+    <rect x="36" y="0" width="8" height="800" rx="4" fill="url(#metal-bar)" stroke="#bbb" stroke-width="1.5"/>
+    <defs>
+        <linearGradient id="metal-bar" x1="36" y1="0" x2="44" y2="800" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e0e0e0"/>
+        <stop offset="0.5" stop-color="#b0b0b0"/>
+        <stop offset="1" stop-color="#888"/>
+        </linearGradient>
+    </defs>
+    <g id="firefighter-group">
+        <!-- Ombre dynamique sous le pompier (animée par JS) -->
+        <ellipse id="ff-shadow" cx="40" cy="200" rx="18" ry="6" fill="#000" opacity="0.13"/>
+        <!-- Main body group, will be rotated/translated by JS -->
+        <g id="firefighter-body">
+        <!-- Mains (gants noirs, plis) -->
+        <ellipse id="hand-top" cx="40" cy="70" rx="6" ry="4" fill="#222" stroke="#444" stroke-width="1.5"/>
+        <ellipse id="hand-bottom" cx="40" cy="130" rx="6" ry="4" fill="#222" stroke="#444" stroke-width="1.5"/>
+        <!-- Gouttes de sueur (animées en JS, visibles en montée rapide) -->
+        <ellipse id="sweat-drop-1" cx="52" cy="82" rx="1.1" ry="2.2" fill="#eaf6ff" opacity="0"/>
+        <ellipse id="sweat-drop-2" cx="54" cy="88" rx="0.8" ry="1.5" fill="#eaf6ff" opacity="0"/>
+        <!-- Reflets gants -->
+        <ellipse cx="42" cy="72" rx="2" ry="1" fill="#fff" opacity="0.08"/>
+        <ellipse cx="38" cy="128" rx="2" ry="1" fill="#fff" opacity="0.08"/>
+        <!-- Jambes animables (pour descente/remontée réaliste) -->
+        <g id="legs-group">
+            <rect id="leg-left" x="28" y="138" width="8" height="36" rx="4" fill="#232a3d" stroke="#888" stroke-width="1.2"/>
+            <rect id="leg-right" x="44" y="138" width="8" height="36" rx="4" fill="#232a3d" stroke="#888" stroke-width="1.2"/>
+        </g>
+        <!-- Bras musclés (formes dynamiques, reflets) -->
+        <g id="arms-group">
+            <rect id="arm-left" x="28" y="70" width="11" height="44" rx="5.5" fill="#232a3d" stroke="#888" stroke-width="1.5"/>
+            <rect id="arm-right" x="41" y="70" width="11" height="44" rx="5.5" fill="#232a3d" stroke="#888" stroke-width="1.5"/>
+            <!-- Reflets bras -->
+            <rect x="30" y="80" width="3" height="18" rx="1.5" fill="#fff" opacity="0.10"/>
+            <rect x="45" y="80" width="3" height="18" rx="1.5" fill="#fff" opacity="0.10"/>
+        </g>
+        <!-- Jacket (dark blue, reflective stripes, collar, badge) -->
+        <g id="jacket-group">
+            <rect x="27" y="90" width="26" height="50" rx="13" fill="#232a3d" stroke="#fff" stroke-width="2"/>
+            <!-- Plis veste -->
+            <path d="M40 90 Q42 110 40 140" stroke="#222" stroke-width="2" fill="none" opacity="0.18"/>
+            <path d="M32 100 Q34 120 32 138" stroke="#222" stroke-width="1.2" fill="none" opacity="0.12"/>
+            <path d="M48 100 Q46 120 48 138" stroke="#222" stroke-width="1.2" fill="none" opacity="0.12"/>
+            <!-- Bandes réfléchissantes -->
+            <rect x="27" y="110" width="26" height="5" rx="2.5" fill="#ffe066" opacity="0.85"/>
+            <rect x="27" y="125" width="26" height="5" rx="2.5" fill="#ffe066" opacity="0.85"/>
+            <rect x="27" y="118" width="26" height="3" rx="1.5" fill="#e0e0e0" opacity="0.85"/>
+            <!-- Badge poitrine -->
+            <rect x="46" y="96" width="7" height="7" rx="2" fill="#ffe066" stroke="#b81d38" stroke-width="1"/>
+            <!-- Ecusson tricolore -->
+            <rect x="27" y="96" width="6" height="7" rx="1.5" fill="#fff" stroke="#222" stroke-width="0.5"/>
+            <rect x="27" y="96" width="2" height="7" rx="1" fill="#0055a4"/>
+            <rect x="31" y="96" width="2" height="7" rx="1" fill="#ef4135"/>
+            <!-- Message d'encouragement (animé par JS, visible à l'arrêt) -->
+            <text id="ff-message" x="40" y="105" font-size="6" font-family="Inter, Arial, sans-serif" fill="#ffe066" text-anchor="middle" opacity="0"></text>
+        </g>
+        <!-- Head (determined face, chinstrap) -->
+        <g id="head-group">
+            <ellipse cx="40" cy="80" rx="12" ry="10" fill="#f5d6b0" stroke="#bfa27a" stroke-width="2"/>
+            <!-- Eyes -->
+            <ellipse cx="36" cy="78" rx="1.2" ry="1.2" fill="#222"/>
+            <ellipse cx="44" cy="78" rx="1.2" ry="1.2" fill="#222"/>
+            <!-- Brows -->
+            <path d="M34 76 Q36 75 38 76" stroke="#444" stroke-width="1" fill="none"/>
+            <path d="M42 76 Q44 75 46 76" stroke="#444" stroke-width="1" fill="none"/>
+            <!-- Chinstrap -->
+            <path d="M36 88 Q40 92 44 88" stroke="#888" stroke-width="2" fill="none"/>
+            <!-- Mouth (determined) -->
+            <path d="M37 85 Q40 87 43 85" stroke="#b81d38" stroke-width="1.2" fill="none"/>
+        </g>
+        <!-- Helmet (F1 style, silver, large visor, crest, side protections) -->
+        <g id="helmet-group">
+            <!-- Coque principale -->
+            <ellipse cx="40" cy="72" rx="15" ry="9" fill="#e0e0e0" stroke="#888" stroke-width="2.2"/>
+            <!-- Reflets casque -->
+            <ellipse cx="36" cy="70" rx="4" ry="2" fill="#fff" opacity="0.18"/>
+            <ellipse cx="44" cy="74" rx="3" ry="1.2" fill="#fff" opacity="0.12"/>
+            <!-- Reflet dynamique (animé par JS) -->
+            <rect id="helmet-gloss" x="32" y="66" width="12" height="3" rx="1.5" fill="#fff" opacity="0.10"/>
+        </g>
+        <!-- Gyro -->
+        <ellipse id="gyro" cx="40" cy="64" rx="7" ry="4" fill="#eaf6ff" stroke="#1da1f2" stroke-width="1.5"/>
+        <ellipse id="gyro-light" cx="40" cy="64" rx="11" ry="7" fill="#1da1f2" opacity="0.18"/>
+        <!-- Harness -->
+        <rect x="38" y="90" width="4" height="48" rx="2" fill="#fff" opacity=".7"/>
+        <!-- Pants (dark, with stripes, non-animées) -->
+        <g id="pants-group">
+            <!-- Plis pantalon -->
+            <rect x="30" y="150" width="2" height="12" rx="1" fill="#fff" opacity="0.08"/>
+            <rect x="46" y="150" width="2" height="12" rx="1" fill="#fff" opacity="0.08"/>
+            <!-- Stripes -->
+            <rect x="30" y="160" width="4" height="8" rx="2" fill="#ffe066" opacity="0.85"/>
+            <rect x="46" y="160" width="4" height="8" rx="2" fill="#ffe066" opacity="0.85"/>
+        </g>
+        <!-- Boots (black, realistic) -->
+        <g id="boots-group">
+            <rect x="28" y="172" width="8" height="10" rx="3" fill="#222" stroke="#444" stroke-width="1.2"/>
+            <rect x="44" y="172" width="8" height="10" rx="3" fill="#222" stroke="#444" stroke-width="1.2"/>
+            <!-- Reflets bottes -->
+            <ellipse cx="32" cy="176" rx="2" ry="1" fill="#fff" opacity="0.08"/>
+            <ellipse cx="48" cy="176" rx="2" ry="1" fill="#fff" opacity="0.08"/>
+        </g>
+        </g>
+    </g>
+    </svg>
+</div>
+
+<script is:inline>
+const seeOnMobile = false; // Mets à true pour activer sur mobile
+(function() {
+  const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+  if (!seeOnMobile && isMobile) return;
+  const ramp = document.getElementById('firefighter-ramp');
+  if (!ramp) return;
+  const group = ramp.querySelector('#firefighter-group');
+  const body = group?.querySelector('#firefighter-body');
+  const legs = group?.querySelector('#legs-group');
+  const helmet = body?.querySelector('#helmet-group');
+  const handTop = body?.querySelector('#hand-top');
+  const handBottom = body?.querySelector('#hand-bottom');
+  const helmetGloss = helmet?.querySelector('#helmet-gloss');
+  const ffMessage = body?.querySelector('#ff-message');
+  let shadow = group?.querySelector('#ff-shadow');
+  if (!group || !body || !legs) return;
+  let bubble = document.getElementById('firefighter-bubble');
+  if (!bubble) {
+    bubble = document.createElement('div');
+    bubble.id = 'firefighter-bubble';
+    bubble.style.position = 'fixed';
+    bubble.style.top = '90px';
+    bubble.style.right = '100px';
+    bubble.style.zIndex = '9999';
+    bubble.style.maxWidth = '260px';
+    bubble.style.background = 'rgba(255,255,255,0.92)';
+    bubble.style.borderRadius = '1.2em';
+    bubble.style.boxShadow = '0 8px 32px 0 rgba(0,0,0,0.18)';
+    bubble.style.padding = '1.1em 1.5em 1.1em 1.3em';
+    bubble.style.fontFamily = 'Inter, Roboto Mono, sans-serif';
+    bubble.style.fontWeight = '900';
+    bubble.style.fontSize = '1.1rem';
+    bubble.style.color = '#b81d38';
+    bubble.style.display = 'none';
+    bubble.style.transition = 'opacity 0.4s cubic-bezier(.7,1.7,.7,1), filter 0.4s cubic-bezier(.7,1.7,.7,1)';
+    bubble.style.pointerEvents = 'none';
+    bubble.style.backdropFilter = 'blur(7px)';
+    bubble.style.opacity = '0';
+    document.body.appendChild(bubble);
+  }
+  const sectionBubbles = [
+    { id: 'home', text: "🚒 Besoin d'une intervention web ? Pinpon arrive !" },
+    { id: 'bio', text: "🧢 Double casquette, double efficacité !" },
+    { id: 'about', text: "🚨 Protocole d'urgence digitale activé !" },
+    { id: 'portfolio', text: "📁 Dossiers d'intervention : mission accomplie !" },
+    { id: 'partners', text: "🤝 La confiance, c'est la base d'une bonne intervention." },
+    { id: 'reviews', text: "⭐ Satisfaction client : priorité absolue !" },
+    { id: 'contact', text: "🔔 Prêt à déclencher l'alarme ?" },
+  ];
+  const sections = sectionBubbles.map(s => document.getElementById(s.id)).filter(Boolean);
+  function getCurrentSection(scrollY) {
+    let current = sectionBubbles[0];
+    for (let i = 0; i < sections.length; i++) {
+      const rect = sections[i].getBoundingClientRect();
+      const top = rect.top + window.scrollY;
+      if (scrollY >= top - window.innerHeight/2) {
+        current = sectionBubbles[i];
+      }
+    }
+    return current;
+  }
+  let lastScrollY = window.scrollY;
+  let lastTime = performance.now();
+  let velocity = 0;
+  let bubbleTimeout = null;
+  function safeTransform(val) {
+    return Math.abs(val) < 0.01 ? 0 : Number(val.toFixed(3));
+  }
+  function animate() {
+    // Nettoyage : plus de messages inutiles, encouragement caché si non visible
+    if (ffMessage) {
+      ffMessage.textContent = '';
+      ffMessage.setAttribute('opacity', '0');
+      ffMessage.setAttribute('display', 'none');
+    }
+    const scrollY = window.scrollY || window.pageYOffset;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = Math.min(1, Math.max(0, scrollY / docHeight));
+    const rampHeight = 800 - 220;
+    const y = progress * rampHeight;
+    const now = performance.now();
+    const dt = Math.max(16, now - lastTime);
+    velocity = (scrollY - lastScrollY) / (dt/1000);
+    lastScrollY = scrollY;
+    lastTime = now;
+    let mode = 'slide';
+    if (velocity < -30) mode = 'climb';
+    else if (velocity > 30) mode = 'slide';
+    else mode = 'idle';
+    group.setAttribute('transform', `translate(0,${safeTransform(y)})`);
+    // Ombre simplifiée : taille et opacité plus naturelles
+    if (shadow) {
+      const shadowY = 200 + y + (mode === 'slide' || mode === 'climb' ? 36 : 0);
+      shadow.setAttribute('cy', `${shadowY}`);
+      shadow.setAttribute('cx', '40');
+      let rx = 18 - Math.abs(velocity) * 0.012;
+      let ry = 6 + Math.abs(velocity) * 0.01;
+      if (mode === 'idle') {
+        rx = 16;
+        ry = 7;
+      }
+      shadow.setAttribute('rx', `${Math.max(10, safeTransform(rx))}`);
+      shadow.setAttribute('ry', `${Math.min(14, safeTransform(ry))}`);
+      shadow.setAttribute('opacity', `${0.13 + Math.min(0.12, Math.abs(velocity)/2000)}`);
+    }
+    // Animation du corps (plus simple, DRY)
+    const legLeft = legs.querySelector('#leg-left');
+    const legRight = legs.querySelector('#leg-right');
+    const armLeft = body.querySelector('#arm-left');
+    const armRight = body.querySelector('#arm-right');
+    const micro = Math.sin(now/60) * 0.7 + Math.sin(now/37) * 0.5;
+    const micro2 = Math.cos(now/41) * 0.5;
+    if (mode === 'slide') {
+      const wind = Math.min(1, Math.abs(velocity) / 1200);
+      const skew = 10 + wind * 18 + micro*1.2;
+      const scaleX = 1 + wind * 0.18 + micro2*0.01;
+      const blur = wind > 0.2 ? `blur(${wind*3.5}px)` : 'none';
+      const vib = wind > 0.2 ? Math.sin(now/8)*1.2 : 0;
+      body.setAttribute('transform', `skewY(${safeTransform(-skew)}) scaleX(${safeTransform(scaleX)}) translate(${safeTransform(vib)},${safeTransform(micro*0.7)})`);
+      if (legLeft && legRight) {
+        legLeft.setAttribute('transform', `translate(${safeTransform(micro*0.7)},0)`);
+        legRight.setAttribute('transform', `translate(${safeTransform(-micro*0.7)},0)`);
+      }
+      if (armLeft && armRight) {
+        armLeft.setAttribute('transform', `translate(${safeTransform(micro*0.5)},0)`);
+        armRight.setAttribute('transform', `translate(${safeTransform(-micro*0.5)},0)`);
+      }
+      if (handTop) handTop.setAttribute('transform', `scale(${1+wind*0.04},${1-wind*0.04})`);
+      if (handBottom) handBottom.setAttribute('transform', `scale(${1+wind*0.04},${1-wind*0.04})`);
+      group.style.filter = blur;
+    } else if (mode === 'climb') {
+      const effort = Math.min(1, Math.abs(velocity) / 900);
+      const skew = -12 - effort * 10 + micro*0.7;
+      const scaleX = 1 - effort * 0.08 + micro2*0.01;
+      const t = now/180;
+      if (legLeft && legRight) {
+        legLeft.setAttribute('transform', `translate(0,${safeTransform(Math.sin(t)*8 + micro*1.2)})`);
+        legRight.setAttribute('transform', `translate(0,${safeTransform(-Math.sin(t)*8 - micro*1.2)})`);
+      }
+      if (armLeft && armRight) {
+        armLeft.setAttribute('transform', `translate(0,${safeTransform(Math.cos(t)*6 + micro*0.8)})`);
+        armRight.setAttribute('transform', `translate(0,${safeTransform(-Math.cos(t)*6 - micro*0.8)})`);
+      }
+      if (handTop) handTop.setAttribute('transform', `scale(${1.08+effort*0.08},${0.92-effort*0.08})`);
+      if (handBottom) handBottom.setAttribute('transform', `scale(${1.08+effort*0.08},${0.92-effort*0.08})`);
+      body.setAttribute('transform', `skewY(${safeTransform(-skew)}) scaleX(${safeTransform(scaleX)}) translate(${safeTransform(micro*0.7)},${safeTransform(micro2*0.7)})`);
+      group.style.filter = 'none';
+    } else {
+      body.setAttribute('transform', `skewY(${safeTransform(micro*0.5)}) scaleX(${safeTransform(1+micro2*0.005)}) translate(0,${safeTransform(Math.abs(micro)*0.7)})`);
+      if (legLeft && legRight) {
+        legLeft.setAttribute('transform', `translate(0,${safeTransform(micro*1.2)})`);
+        legRight.setAttribute('transform', `translate(0,${safeTransform(-micro*1.2)})`);
+      }
+      if (armLeft && armRight) {
+        armLeft.setAttribute('transform', `translate(0,${safeTransform(micro*1.1)})`);
+        armRight.setAttribute('transform', `translate(0,${safeTransform(-micro*1.1)})`);
+      }
+      if (handTop) handTop.setAttribute('transform', 'scale(1,1)');
+      if (handBottom) handBottom.setAttribute('transform', 'scale(1,1)');
+      group.style.filter = 'none';
+    }
+    if (Math.abs(velocity) > 400) {
+      group.classList.add('alarm');
+    } else {
+      group.classList.remove('alarm');
+    }
+    if (Math.abs(velocity) < 10) {
+      const current = getCurrentSection(scrollY);
+      bubble.textContent = current.text;
+      bubble.style.display = 'block';
+      bubble.style.opacity = '1';
+      bubble.style.filter = 'blur(0)';
+      if (bubbleTimeout) clearTimeout(bubbleTimeout);
+    } else {
+      bubble.style.opacity = '0.25';
+      bubble.style.filter = 'blur(3px)';
+      if (bubbleTimeout) clearTimeout(bubbleTimeout);
+      bubbleTimeout = setTimeout(() => { bubble.style.display = 'block'; }, 400);
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>

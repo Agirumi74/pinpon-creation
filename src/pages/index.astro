@@ -8,6 +8,7 @@ import ContactSection from '@components/Sections/ContactSection.astro';
 import PartnersSection from '@components/Sections/PartnersSection.astro';
 import PortfolioSection from '@components/Sections/PortfolioSection.astro';
 import ReviewsSection from '@components/Sections/ReviewsSection.astro';
+import PompierRampe from '@components/Animations/PompierRampe.astro';
 
 
 // Déclaration des constantes pour la page
@@ -36,116 +37,7 @@ const pageRobots = "noindex, nofollow";
   <PartnersSection />
   <ReviewsSection />
   <ContactSection />
-</main>
-    <!-- Pompier rappel animation -->
-    <div id="firefighter-ramp" aria-hidden="true">
-      <svg id="firefighter-svg" width="80" height="100vh" viewBox="0 0 80 800" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:100vh; width:80px;">
-        <!-- Metal Ramp (bar) -->
-        <rect x="36" y="0" width="8" height="800" rx="4" fill="url(#metal-bar)" stroke="#bbb" stroke-width="1.5"/>
-        <defs>
-          <linearGradient id="metal-bar" x1="36" y1="0" x2="44" y2="800" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#e0e0e0"/>
-            <stop offset="0.5" stop-color="#b0b0b0"/>
-            <stop offset="1" stop-color="#888"/>
-          </linearGradient>
-        </defs>
-        <g id="firefighter-group">
-          <!-- Ombre dynamique sous le pompier (animée par JS) -->
-          <ellipse id="ff-shadow" cx="40" cy="200" rx="18" ry="6" fill="#000" opacity="0.13"/>
-          <!-- Main body group, will be rotated/translated by JS -->
-          <g id="firefighter-body">
-            <!-- Mains (gants noirs, plis) -->
-            <ellipse id="hand-top" cx="40" cy="70" rx="6" ry="4" fill="#222" stroke="#444" stroke-width="1.5"/>
-            <ellipse id="hand-bottom" cx="40" cy="130" rx="6" ry="4" fill="#222" stroke="#444" stroke-width="1.5"/>
-            <!-- Gouttes de sueur (animées en JS, visibles en montée rapide) -->
-            <ellipse id="sweat-drop-1" cx="52" cy="82" rx="1.1" ry="2.2" fill="#eaf6ff" opacity="0"/>
-            <ellipse id="sweat-drop-2" cx="54" cy="88" rx="0.8" ry="1.5" fill="#eaf6ff" opacity="0"/>
-            <!-- Reflets gants -->
-            <ellipse cx="42" cy="72" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-            <ellipse cx="38" cy="128" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-            <!-- Jambes animables (pour descente/remontée réaliste) -->
-            <g id="legs-group">
-              <rect id="leg-left" x="28" y="138" width="8" height="36" rx="4" fill="#232a3d" stroke="#888" stroke-width="1.2"/>
-              <rect id="leg-right" x="44" y="138" width="8" height="36" rx="4" fill="#232a3d" stroke="#888" stroke-width="1.2"/>
-            </g>
-            <!-- Bras musclés (formes dynamiques, reflets) -->
-            <g id="arms-group">
-              <rect id="arm-left" x="28" y="70" width="11" height="44" rx="5.5" fill="#232a3d" stroke="#888" stroke-width="1.5"/>
-              <rect id="arm-right" x="41" y="70" width="11" height="44" rx="5.5" fill="#232a3d" stroke="#888" stroke-width="1.5"/>
-              <!-- Reflets bras -->
-              <rect x="30" y="80" width="3" height="18" rx="1.5" fill="#fff" opacity="0.10"/>
-              <rect x="45" y="80" width="3" height="18" rx="1.5" fill="#fff" opacity="0.10"/>
-            </g>
-            <!-- Jacket (dark blue, reflective stripes, collar, badge) -->
-            <g id="jacket-group">
-              <rect x="27" y="90" width="26" height="50" rx="13" fill="#232a3d" stroke="#fff" stroke-width="2"/>
-              <!-- Plis veste -->
-              <path d="M40 90 Q42 110 40 140" stroke="#222" stroke-width="2" fill="none" opacity="0.18"/>
-              <path d="M32 100 Q34 120 32 138" stroke="#222" stroke-width="1.2" fill="none" opacity="0.12"/>
-              <path d="M48 100 Q46 120 48 138" stroke="#222" stroke-width="1.2" fill="none" opacity="0.12"/>
-              <!-- Bandes réfléchissantes -->
-              <rect x="27" y="110" width="26" height="5" rx="2.5" fill="#ffe066" opacity="0.85"/>
-              <rect x="27" y="125" width="26" height="5" rx="2.5" fill="#ffe066" opacity="0.85"/>
-              <rect x="27" y="118" width="26" height="3" rx="1.5" fill="#e0e0e0" opacity="0.85"/>
-              <!-- Badge poitrine -->
-              <rect x="46" y="96" width="7" height="7" rx="2" fill="#ffe066" stroke="#b81d38" stroke-width="1"/>
-              <!-- Ecusson tricolore -->
-              <rect x="27" y="96" width="6" height="7" rx="1.5" fill="#fff" stroke="#222" stroke-width="0.5"/>
-              <rect x="27" y="96" width="2" height="7" rx="1" fill="#0055a4"/>
-              <rect x="31" y="96" width="2" height="7" rx="1" fill="#ef4135"/>
-              <!-- Message d'encouragement (animé par JS, visible à l'arrêt) -->
-              <text id="ff-message" x="40" y="105" font-size="6" font-family="Inter, Arial, sans-serif" fill="#ffe066" text-anchor="middle" opacity="0"></text>
-            </g>
-            <!-- Head (determined face, chinstrap) -->
-            <g id="head-group">
-              <ellipse cx="40" cy="80" rx="12" ry="10" fill="#f5d6b0" stroke="#bfa27a" stroke-width="2"/>
-              <!-- Eyes -->
-              <ellipse cx="36" cy="78" rx="1.2" ry="1.2" fill="#222"/>
-              <ellipse cx="44" cy="78" rx="1.2" ry="1.2" fill="#222"/>
-              <!-- Brows -->
-              <path d="M34 76 Q36 75 38 76" stroke="#444" stroke-width="1" fill="none"/>
-              <path d="M42 76 Q44 75 46 76" stroke="#444" stroke-width="1" fill="none"/>
-              <!-- Chinstrap -->
-              <path d="M36 88 Q40 92 44 88" stroke="#888" stroke-width="2" fill="none"/>
-              <!-- Mouth (determined) -->
-              <path d="M37 85 Q40 87 43 85" stroke="#b81d38" stroke-width="1.2" fill="none"/>
-            </g>
-            <!-- Helmet (F1 style, silver, large visor, crest, side protections) -->
-            <g id="helmet-group">
-              <!-- Coque principale -->
-              <ellipse cx="40" cy="72" rx="15" ry="9" fill="#e0e0e0" stroke="#888" stroke-width="2.2"/>
-              <!-- Reflets casque -->
-              <ellipse cx="36" cy="70" rx="4" ry="2" fill="#fff" opacity="0.18"/>
-              <ellipse cx="44" cy="74" rx="3" ry="1.2" fill="#fff" opacity="0.12"/>
-              <!-- Reflet dynamique (animé par JS) -->
-              <rect id="helmet-gloss" x="32" y="66" width="12" height="3" rx="1.5" fill="#fff" opacity="0.10"/>
-            </g>
-            <!-- Gyro -->
-            <ellipse id="gyro" cx="40" cy="64" rx="7" ry="4" fill="#eaf6ff" stroke="#1da1f2" stroke-width="1.5"/>
-            <ellipse id="gyro-light" cx="40" cy="64" rx="11" ry="7" fill="#1da1f2" opacity="0.18"/>
-            <!-- Harness -->
-            <rect x="38" y="90" width="4" height="48" rx="2" fill="#fff" opacity=".7"/>
-            <!-- Pants (dark, with stripes, non-animées) -->
-            <g id="pants-group">
-              <!-- Plis pantalon -->
-              <rect x="30" y="150" width="2" height="12" rx="1" fill="#fff" opacity="0.08"/>
-              <rect x="46" y="150" width="2" height="12" rx="1" fill="#fff" opacity="0.08"/>
-              <!-- Stripes -->
-              <rect x="30" y="160" width="4" height="8" rx="2" fill="#ffe066" opacity="0.85"/>
-              <rect x="46" y="160" width="4" height="8" rx="2" fill="#ffe066" opacity="0.85"/>
-            </g>
-            <!-- Boots (black, realistic) -->
-            <g id="boots-group">
-              <rect x="28" y="172" width="8" height="10" rx="3" fill="#222" stroke="#444" stroke-width="1.2"/>
-              <rect x="44" y="172" width="8" height="10" rx="3" fill="#222" stroke="#444" stroke-width="1.2"/>
-              <!-- Reflets bottes -->
-              <ellipse cx="32" cy="176" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-              <ellipse cx="48" cy="176" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-            </g>
-          </g>
-        </g>
-      </svg>
-    </div>
-    
+  <PompierRampe />
+</main>  
 
 </Layout>
