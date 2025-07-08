@@ -163,7 +163,7 @@ const {
     <meta name="theme-color" content={THEME_COLOR}>
 
   </head>
- <body class="cursor-hidden">
+ <body>
     <Cursor />
     <Header />
     <slot />
@@ -187,8 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
   import('/src/scripts/reviews-carousel.js').then(mod => mod.init3DReviewsCarousel());
   import('/src/scripts/value-card-glow.js').then(mod => mod.initValueCardGlow());
   import('/src/scripts/intervention-cta.js').then(mod => mod.initInterventionCTA());
-  // Cursor is now handled by <Cursor /> component
-  import('/src/scripts/firefighter-ramp.js').then(mod => mod.initFirefighterRamp());
 });
   </script>
 </html>

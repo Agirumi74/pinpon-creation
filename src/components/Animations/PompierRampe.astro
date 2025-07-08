@@ -11,102 +11,143 @@
         </linearGradient>
     </defs>
     <g id="firefighter-group">
-        <!-- Ombre dynamique sous le pompier (animée par JS) -->
-        <ellipse id="ff-shadow" cx="40" cy="200" rx="18" ry="6" fill="#000" opacity="0.13"/>
-        <!-- Main body group, will be rotated/translated by JS -->
+        <!-- Ombre dynamique sous le pompier (animée par JS, plus douce) -->
+        <ellipse id="ff-shadow" cx="40" cy="200" rx="20" ry="7" fill="#000" opacity="0.10" filter="blur(2px)"/>
+        <!-- Pompier cartoon premium, proportions lisibles, tout de dos, aucun visage -->
         <g id="firefighter-body">
-        <!-- Mains (gants noirs, plis) -->
-        <ellipse id="hand-top" cx="40" cy="70" rx="6" ry="4" fill="#222" stroke="#444" stroke-width="1.5"/>
-        <ellipse id="hand-bottom" cx="40" cy="130" rx="6" ry="4" fill="#222" stroke="#444" stroke-width="1.5"/>
-        <!-- Gouttes de sueur (animées en JS, visibles en montée rapide) -->
-        <ellipse id="sweat-drop-1" cx="52" cy="82" rx="1.1" ry="2.2" fill="#eaf6ff" opacity="0"/>
-        <ellipse id="sweat-drop-2" cx="54" cy="88" rx="0.8" ry="1.5" fill="#eaf6ff" opacity="0"/>
-        <!-- Reflets gants -->
-        <ellipse cx="42" cy="72" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-        <ellipse cx="38" cy="128" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-        <!-- Jambes animables (pour descente/remontée réaliste) -->
-        <g id="legs-group">
-            <rect id="leg-left" x="28" y="138" width="8" height="36" rx="4" fill="#232a3d" stroke="#888" stroke-width="1.2"/>
-            <rect id="leg-right" x="44" y="138" width="8" height="36" rx="4" fill="#232a3d" stroke="#888" stroke-width="1.2"/>
+          <!-- Casque rouge stylisé, vue de dos -->
+          <circle cx="40" cy="90" r="18" fill="#ff0000" stroke="#b81d38" stroke-width="2.2"/>
+          <rect x="25" y="90" width="30" height="10" rx="5" fill="#ff0000"/>
+          <!-- Visière arrière (noire, pas de visage) -->
+          <ellipse cx="40" cy="105" rx="16" ry="6" fill="#0c0c0c"/>
+          <!-- Veste rouge -->
+          <rect x="22" y="110" width="36" height="60" rx="10" fill="#e60000"/>
+          <!-- Bandes réfléchissantes -->
+          <rect x="22" y="125" width="36" height="6" rx="3" fill="#ffe066"/>
+          <rect x="22" y="155" width="36" height="6" rx="3" fill="#ffe066"/>
+          <!-- Bras gauche -->
+          <rect x="10" y="120" width="14" height="38" rx="6" fill="#e60000"/>
+          <!-- Main gauche -->
+          <circle cx="17" cy="158" r="7" fill="#f2c18d"/>
+          <!-- Bras droit -->
+          <rect x="56" y="120" width="14" height="38" rx="6" fill="#e60000"/>
+          <!-- Main droite -->
+          <circle cx="63" cy="158" r="7" fill="#f2c18d"/>
+          <!-- Jambes -->
+          <rect x="26" y="170" width="12" height="38" rx="5" fill="#000"/>
+          <rect x="42" y="170" width="12" height="38" rx="5" fill="#000"/>
+          <!-- Bottes -->
+          <rect x="26" y="208" width="12" height="12" rx="4" fill="#333"/>
+          <rect x="42" y="208" width="12" height="12" rx="4" fill="#333"/>
         </g>
-        <!-- Bras musclés (formes dynamiques, reflets) -->
-        <g id="arms-group">
-            <rect id="arm-left" x="28" y="70" width="11" height="44" rx="5.5" fill="#232a3d" stroke="#888" stroke-width="1.5"/>
-            <rect id="arm-right" x="41" y="70" width="11" height="44" rx="5.5" fill="#232a3d" stroke="#888" stroke-width="1.5"/>
-            <!-- Reflets bras -->
-            <rect x="30" y="80" width="3" height="18" rx="1.5" fill="#fff" opacity="0.10"/>
-            <rect x="45" y="80" width="3" height="18" rx="1.5" fill="#fff" opacity="0.10"/>
-        </g>
-        <!-- Jacket (dark blue, reflective stripes, collar, badge) -->
-        <g id="jacket-group">
-            <rect x="27" y="90" width="26" height="50" rx="13" fill="#232a3d" stroke="#fff" stroke-width="2"/>
-            <!-- Plis veste -->
-            <path d="M40 90 Q42 110 40 140" stroke="#222" stroke-width="2" fill="none" opacity="0.18"/>
-            <path d="M32 100 Q34 120 32 138" stroke="#222" stroke-width="1.2" fill="none" opacity="0.12"/>
-            <path d="M48 100 Q46 120 48 138" stroke="#222" stroke-width="1.2" fill="none" opacity="0.12"/>
-            <!-- Bandes réfléchissantes -->
-            <rect x="27" y="110" width="26" height="5" rx="2.5" fill="#ffe066" opacity="0.85"/>
-            <rect x="27" y="125" width="26" height="5" rx="2.5" fill="#ffe066" opacity="0.85"/>
-            <rect x="27" y="118" width="26" height="3" rx="1.5" fill="#e0e0e0" opacity="0.85"/>
-            <!-- Badge poitrine -->
-            <rect x="46" y="96" width="7" height="7" rx="2" fill="#ffe066" stroke="#b81d38" stroke-width="1"/>
-            <!-- Ecusson tricolore -->
-            <rect x="27" y="96" width="6" height="7" rx="1.5" fill="#fff" stroke="#222" stroke-width="0.5"/>
-            <rect x="27" y="96" width="2" height="7" rx="1" fill="#0055a4"/>
-            <rect x="31" y="96" width="2" height="7" rx="1" fill="#ef4135"/>
-            <!-- Message d'encouragement (animé par JS, visible à l'arrêt) -->
-            <text id="ff-message" x="40" y="105" font-size="6" font-family="Inter, Arial, sans-serif" fill="#ffe066" text-anchor="middle" opacity="0"></text>
-        </g>
-        <!-- Head (determined face, chinstrap) -->
-        <g id="head-group">
-            <ellipse cx="40" cy="80" rx="12" ry="10" fill="#f5d6b0" stroke="#bfa27a" stroke-width="2"/>
-            <!-- Eyes -->
-            <ellipse cx="36" cy="78" rx="1.2" ry="1.2" fill="#222"/>
-            <ellipse cx="44" cy="78" rx="1.2" ry="1.2" fill="#222"/>
-            <!-- Brows -->
-            <path d="M34 76 Q36 75 38 76" stroke="#444" stroke-width="1" fill="none"/>
-            <path d="M42 76 Q44 75 46 76" stroke="#444" stroke-width="1" fill="none"/>
-            <!-- Chinstrap -->
-            <path d="M36 88 Q40 92 44 88" stroke="#888" stroke-width="2" fill="none"/>
-            <!-- Mouth (determined) -->
-            <path d="M37 85 Q40 87 43 85" stroke="#b81d38" stroke-width="1.2" fill="none"/>
-        </g>
-        <!-- Helmet (F1 style, silver, large visor, crest, side protections) -->
-        <g id="helmet-group">
-            <!-- Coque principale -->
-            <ellipse cx="40" cy="72" rx="15" ry="9" fill="#e0e0e0" stroke="#888" stroke-width="2.2"/>
-            <!-- Reflets casque -->
-            <ellipse cx="36" cy="70" rx="4" ry="2" fill="#fff" opacity="0.18"/>
-            <ellipse cx="44" cy="74" rx="3" ry="1.2" fill="#fff" opacity="0.12"/>
-            <!-- Reflet dynamique (animé par JS) -->
-            <rect id="helmet-gloss" x="32" y="66" width="12" height="3" rx="1.5" fill="#fff" opacity="0.10"/>
-        </g>
-        <!-- Gyro -->
+        <!-- Gyro (clignotant, effet premium) -->
         <ellipse id="gyro" cx="40" cy="64" rx="7" ry="4" fill="#eaf6ff" stroke="#1da1f2" stroke-width="1.5"/>
         <ellipse id="gyro-light" cx="40" cy="64" rx="11" ry="7" fill="#1da1f2" opacity="0.18"/>
-        <!-- Harness -->
-        <rect x="38" y="90" width="4" height="48" rx="2" fill="#fff" opacity=".7"/>
-        <!-- Pants (dark, with stripes, non-animées) -->
-        <g id="pants-group">
-            <!-- Plis pantalon -->
-            <rect x="30" y="150" width="2" height="12" rx="1" fill="#fff" opacity="0.08"/>
-            <rect x="46" y="150" width="2" height="12" rx="1" fill="#fff" opacity="0.08"/>
-            <!-- Stripes -->
-            <rect x="30" y="160" width="4" height="8" rx="2" fill="#ffe066" opacity="0.85"/>
-            <rect x="46" y="160" width="4" height="8" rx="2" fill="#ffe066" opacity="0.85"/>
-        </g>
-        <!-- Boots (black, realistic) -->
-        <g id="boots-group">
-            <rect x="28" y="172" width="8" height="10" rx="3" fill="#222" stroke="#444" stroke-width="1.2"/>
-            <rect x="44" y="172" width="8" height="10" rx="3" fill="#222" stroke="#444" stroke-width="1.2"/>
-            <!-- Reflets bottes -->
-            <ellipse cx="32" cy="176" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-            <ellipse cx="48" cy="176" rx="2" ry="1" fill="#fff" opacity="0.08"/>
-        </g>
+        <ellipse id="gyro-flash" cx="40" cy="64" rx="14" ry="8" fill="#1da1f2" opacity="0" filter="blur(6px)"/>
         </g>
     </g>
     </svg>
 </div>
+
+<style>
+  /* --- FIREFIGHTER RAPPEL ANIMATION --- */
+/* --- FIREFIGHTER RAMP --- */
+#firefighter-ramp {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 120;
+  width: 80px;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 1;
+  filter: drop-shadow(0 8px 24px rgba(184,29,56,0.18));
+  transition: opacity 0.4s, filter 0.4s;
+}
+@media (max-width: 700px) {
+  #firefighter-ramp {
+    right: 0;
+    width: 48px;
+    height: 100vh;
+  }
+}
+#firefighter-svg {
+  width: 80px;
+  height: 100vh;
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+#firefighter-bubble {
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.13));
+  border: 2.5px solid #b81d38;
+  font-family: 'Inter', 'Roboto Mono', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.18);
+  animation: bubble-pop 0.5s cubic-bezier(.7,1.7,.7,1);
+}
+
+@keyframes bubble-pop {
+  0% { opacity: 0; transform: scale(0.7) translateY(20px); }
+  60% { opacity: 1; transform: scale(1.08) translateY(-6px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+#firefighter-group #gyro {
+  filter: drop-shadow(0 0 8px #1da1f2);
+  transition: filter 0.2s;
+}
+#firefighter-group.alarm #gyro {
+  filter: drop-shadow(0 0 24px #1da1f2) brightness(1.5);
+}
+#firefighter-group #gyro-light {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+#firefighter-group.alarm #gyro-light {
+  opacity: 1;
+}
+#firefighter-body {
+  transition: transform 0.25s cubic-bezier(.7,1.7,.7,1);
+}
+#legs-group {
+  transition: transform 0.25s cubic-bezier(.7,1.7,.7,1);
+}
+#firefighter-group #gyro {
+  filter: drop-shadow(0 0 8px #1da1f2);
+  transition: filter 0.2s;
+}
+#firefighter-group.alarm #gyro {
+  filter: drop-shadow(0 0 24px #1da1f2) brightness(1.5);
+}
+#firefighter-group #gyro-light {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+#firefighter-group.alarm #gyro-light {
+  opacity: 1;
+}
+#firefighter-group #arm-alarm {
+  transform: rotate(-25deg) translate(-2px, -10px);
+  transform-origin: 24px 41px;
+  transition: transform 0.2s;
+}
+#firefighter-group #arm-down {
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+#firefighter-group.alarm #arm-alarm {
+  transform: rotate(-5deg) translate(-2px, -2px);
+}
+#firefighter-group.alarm #arm-down {
+  opacity: 0.2;
+}
+</style>
 
 <script is:inline>
 const seeOnMobile = false; // Mets à true pour activer sur mobile
@@ -117,14 +158,8 @@ const seeOnMobile = false; // Mets à true pour activer sur mobile
   if (!ramp) return;
   const group = ramp.querySelector('#firefighter-group');
   const body = group?.querySelector('#firefighter-body');
-  const legs = group?.querySelector('#legs-group');
-  const helmet = body?.querySelector('#helmet-group');
-  const handTop = body?.querySelector('#hand-top');
-  const handBottom = body?.querySelector('#hand-bottom');
-  const helmetGloss = helmet?.querySelector('#helmet-gloss');
-  const ffMessage = body?.querySelector('#ff-message');
   let shadow = group?.querySelector('#ff-shadow');
-  if (!group || !body || !legs) return;
+  if (!group || !body) return;
   let bubble = document.getElementById('firefighter-bubble');
   if (!bubble) {
     bubble = document.createElement('div');
@@ -178,12 +213,6 @@ const seeOnMobile = false; // Mets à true pour activer sur mobile
     return Math.abs(val) < 0.01 ? 0 : Number(val.toFixed(3));
   }
   function animate() {
-    // Nettoyage : plus de messages inutiles, encouragement caché si non visible
-    if (ffMessage) {
-      ffMessage.textContent = '';
-      ffMessage.setAttribute('opacity', '0');
-      ffMessage.setAttribute('display', 'none');
-    }
     const scrollY = window.scrollY || window.pageYOffset;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     const progress = Math.min(1, Math.max(0, scrollY / docHeight));
@@ -194,81 +223,19 @@ const seeOnMobile = false; // Mets à true pour activer sur mobile
     velocity = (scrollY - lastScrollY) / (dt/1000);
     lastScrollY = scrollY;
     lastTime = now;
-    let mode = 'slide';
-    if (velocity < -30) mode = 'climb';
-    else if (velocity > 30) mode = 'slide';
-    else mode = 'idle';
     group.setAttribute('transform', `translate(0,${safeTransform(y)})`);
     // Ombre simplifiée : taille et opacité plus naturelles
     if (shadow) {
-      const shadowY = 200 + y + (mode === 'slide' || mode === 'climb' ? 36 : 0);
+      const shadowY = 200 + y;
       shadow.setAttribute('cy', `${shadowY}`);
       shadow.setAttribute('cx', '40');
       let rx = 18 - Math.abs(velocity) * 0.012;
       let ry = 6 + Math.abs(velocity) * 0.01;
-      if (mode === 'idle') {
-        rx = 16;
-        ry = 7;
-      }
-      shadow.setAttribute('rx', `${Math.max(10, safeTransform(rx))}`);
-      shadow.setAttribute('ry', `${Math.min(14, safeTransform(ry))}`);
+      rx = Math.max(10, safeTransform(rx));
+      ry = Math.min(14, safeTransform(ry));
+      shadow.setAttribute('rx', `${rx}`);
+      shadow.setAttribute('ry', `${ry}`);
       shadow.setAttribute('opacity', `${0.13 + Math.min(0.12, Math.abs(velocity)/2000)}`);
-    }
-    // Animation du corps (plus simple, DRY)
-    const legLeft = legs.querySelector('#leg-left');
-    const legRight = legs.querySelector('#leg-right');
-    const armLeft = body.querySelector('#arm-left');
-    const armRight = body.querySelector('#arm-right');
-    const micro = Math.sin(now/60) * 0.7 + Math.sin(now/37) * 0.5;
-    const micro2 = Math.cos(now/41) * 0.5;
-    if (mode === 'slide') {
-      const wind = Math.min(1, Math.abs(velocity) / 1200);
-      const skew = 10 + wind * 18 + micro*1.2;
-      const scaleX = 1 + wind * 0.18 + micro2*0.01;
-      const blur = wind > 0.2 ? `blur(${wind*3.5}px)` : 'none';
-      const vib = wind > 0.2 ? Math.sin(now/8)*1.2 : 0;
-      body.setAttribute('transform', `skewY(${safeTransform(-skew)}) scaleX(${safeTransform(scaleX)}) translate(${safeTransform(vib)},${safeTransform(micro*0.7)})`);
-      if (legLeft && legRight) {
-        legLeft.setAttribute('transform', `translate(${safeTransform(micro*0.7)},0)`);
-        legRight.setAttribute('transform', `translate(${safeTransform(-micro*0.7)},0)`);
-      }
-      if (armLeft && armRight) {
-        armLeft.setAttribute('transform', `translate(${safeTransform(micro*0.5)},0)`);
-        armRight.setAttribute('transform', `translate(${safeTransform(-micro*0.5)},0)`);
-      }
-      if (handTop) handTop.setAttribute('transform', `scale(${1+wind*0.04},${1-wind*0.04})`);
-      if (handBottom) handBottom.setAttribute('transform', `scale(${1+wind*0.04},${1-wind*0.04})`);
-      group.style.filter = blur;
-    } else if (mode === 'climb') {
-      const effort = Math.min(1, Math.abs(velocity) / 900);
-      const skew = -12 - effort * 10 + micro*0.7;
-      const scaleX = 1 - effort * 0.08 + micro2*0.01;
-      const t = now/180;
-      if (legLeft && legRight) {
-        legLeft.setAttribute('transform', `translate(0,${safeTransform(Math.sin(t)*8 + micro*1.2)})`);
-        legRight.setAttribute('transform', `translate(0,${safeTransform(-Math.sin(t)*8 - micro*1.2)})`);
-      }
-      if (armLeft && armRight) {
-        armLeft.setAttribute('transform', `translate(0,${safeTransform(Math.cos(t)*6 + micro*0.8)})`);
-        armRight.setAttribute('transform', `translate(0,${safeTransform(-Math.cos(t)*6 - micro*0.8)})`);
-      }
-      if (handTop) handTop.setAttribute('transform', `scale(${1.08+effort*0.08},${0.92-effort*0.08})`);
-      if (handBottom) handBottom.setAttribute('transform', `scale(${1.08+effort*0.08},${0.92-effort*0.08})`);
-      body.setAttribute('transform', `skewY(${safeTransform(-skew)}) scaleX(${safeTransform(scaleX)}) translate(${safeTransform(micro*0.7)},${safeTransform(micro2*0.7)})`);
-      group.style.filter = 'none';
-    } else {
-      body.setAttribute('transform', `skewY(${safeTransform(micro*0.5)}) scaleX(${safeTransform(1+micro2*0.005)}) translate(0,${safeTransform(Math.abs(micro)*0.7)})`);
-      if (legLeft && legRight) {
-        legLeft.setAttribute('transform', `translate(0,${safeTransform(micro*1.2)})`);
-        legRight.setAttribute('transform', `translate(0,${safeTransform(-micro*1.2)})`);
-      }
-      if (armLeft && armRight) {
-        armLeft.setAttribute('transform', `translate(0,${safeTransform(micro*1.1)})`);
-        armRight.setAttribute('transform', `translate(0,${safeTransform(-micro*1.1)})`);
-      }
-      if (handTop) handTop.setAttribute('transform', 'scale(1,1)');
-      if (handBottom) handBottom.setAttribute('transform', 'scale(1,1)');
-      group.style.filter = 'none';
     }
     if (Math.abs(velocity) > 400) {
       group.classList.add('alarm');

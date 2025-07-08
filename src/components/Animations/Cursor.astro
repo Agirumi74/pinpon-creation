@@ -1,39 +1,153 @@
 ---
+import { Icon } from 'astro-icon/components';
 // Cursor.astro: Custom animated cursor component
 ---
-<div id="cursor"></div>
+
+<!-- Cursor identitaire Pinpon (extincteur pro, SVG premium) -->
+<div id="pinpon-cursor" aria-hidden="true">
+  <div class="extincteur-svg" style="width:120px;height:60px;position:relative;">
+    <Icon name="openmoji:fire-extinguisher" style="width:48px;height:48px;display:block;position:absolute;left:0;top:6px;transition:filter 0.18s, transform 0.12s;z-index:1;" class="extincteur-icon" />
+    <svg style="position:absolute;left:0;top:0;width:120px;height:60px;pointer-events:none;z-index:2;overflow:visible;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="spray-gradient" cx="50%" cy="50%" r="80%">
+          <stop offset="0%" stop-color="#e3f6ff" stop-opacity="0.95"/>
+          <stop offset="60%" stop-color="#b3e0ff" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#b3e0ff" stop-opacity="0.1"/>
+        </radialGradient>
+      </defs>
+      <g id="jet-group"></g>
+    </svg>
+  </div>
+</div>
 <script is:inline>
-  import('/src/scripts/ultimate-cursor.js').then(mod => mod.initUltimateCursor());
+// Cursor Pinpon performant et identitaire
+(() => {
+  const cursor = document.getElementById('pinpon-cursor');
+  const svgWrap = cursor.querySelector('.extincteur-svg');
+  const icon = svgWrap.querySelector('.extincteur-icon');
+  const jetSvg = svgWrap.querySelector('svg:last-child');
+  const jetGroup = jetSvg.querySelector('#jet-group');
+  if (!cursor || !svgWrap || !icon || !jetSvg || !jetGroup) return;
+  let visible = false;
+  let mouseX = -100, mouseY = -100;
+  function move(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    // Décaler le curseur pour que l'extincteur soit sous la souris et le spray bien visible à droite
+    cursor.style.transform = `translate(${mouseX - 18}px, ${mouseY - 30}px)`;
+    if (!visible) {
+      cursor.style.opacity = '1';
+      visible = true;
+    }
+  }
+  function hide() {
+    cursor.style.opacity = '0';
+    visible = false;
+  }
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseout', hide);
+  // Animation jet d'eau/gaz sur clic
+  // Spray continu tant que le clic est maintenu
+  let spraying = false;
+  let sprayInterval = null;
+  function spray() {
+    if (!spraying) return;
+    cursor.classList.add('clicked');
+    icon.classList.add('spraying');
+    for (let i = 0; i < 18; i++) { // Débit constant, mais moins de gouttes par tick
+      const angle = (Math.random() - 0.5) * 0.85;
+      const dist = 38 + Math.random() * 32;
+      const size = 1.5 + Math.random() * 2.8;
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      el.setAttribute('cx', 42 + Math.cos(angle) * 2.2);
+      el.setAttribute('cy', 23 + Math.sin(angle) * 2.2);
+      el.setAttribute('rx', size);
+      el.setAttribute('ry', size * (0.7 + Math.random() * 0.7));
+      el.setAttribute('fill', 'url(#spray-gradient)');
+      el.setAttribute('opacity', '0.75');
+      el.style.filter = 'blur(0.7px)';
+      jetGroup.appendChild(el);
+      const tx = Math.cos(angle) * dist;
+      const ty = Math.sin(angle) * dist;
+      el.animate([
+        { transform: 'translate(0,0)', opacity: 0.75 },
+        { transform: `translate(${tx}px,${ty}px)`, opacity: 0 }
+      ], {
+        duration: 420 + Math.random() * 320,
+        easing: 'cubic-bezier(.7,1.7,.7,1)',
+        fill: 'forwards'
+      });
+      setTimeout(() => el.remove(), 800);
+    }
+    // Effet visuel sur l'icône (secousse + glow)
+    icon.animate([
+      { filter: 'drop-shadow(0 0 0px #b3e0ff)', transform: 'scale(1) rotate(0deg)' },
+      { filter: 'drop-shadow(0 0 24px #b3e0ff)', transform: 'scale(1.08) rotate(-7deg)' },
+      { filter: 'drop-shadow(0 0 0px #b3e0ff)', transform: 'scale(1) rotate(0deg)' }
+    ], {
+      duration: 220,
+      easing: 'cubic-bezier(.7,1.7,.7,1)'
+    });
+  }
+  window.addEventListener('mousedown', () => {
+    spraying = true;
+    spray();
+    sprayInterval = setInterval(spray, 60); // Débit élevé
+  });
+  window.addEventListener('mouseup', () => {
+    spraying = false;
+    clearInterval(sprayInterval);
+    cursor.classList.remove('clicked');
+    icon.classList.remove('spraying');
+  });
+  // Désactive le curseur natif proprement (pas de bug d'état)
+  // Désactive le curseur natif partout, même sur liens/boutons
+  const style = document.createElement('style');
+  style.innerHTML = '* { cursor: none !important; }';
+  document.head.appendChild(style);
+  // Hover sur .magnetic-link : effet visuel sur l'icône
+  document.querySelectorAll('.magnetic-link').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.classList.add('hovered');
+      icon.classList.add('hovered');
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.classList.remove('hovered');
+      icon.classList.remove('hovered');
+    });
+  });
+})();
 </script>
 <style>
-#cursor {
+#pinpon-cursor {
   position: fixed;
-  left: 0; top: 0;
-  width: 38px; height: 38px;
+  top: 0; left: 0;
+  width: 120px; height: 60px;
   pointer-events: none;
-  z-index: 9999;
-  opacity: 1;
-  transition: opacity 0.2s;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.18s, transform 0.08s cubic-bezier(.7,1.7,.7,1);
+  will-change: transform, opacity;
 }
-.pinpon-cursor {
-  width: 100%;
-  height: 100%;
-  display: block;
+.extincteur-svg {
+  width: 120px; height: 60px; display: block; position: relative;
+  filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 22px #e53935);
+  pointer-events: none;
+  transition: filter 0.18s, opacity 0.18s;
 }
-.glow-light {
-  filter: drop-shadow(0 0 12px #fff8) drop-shadow(0 0 24px #fff6);
+.extincteur-icon {
+  transition: filter 0.18s, transform 0.12s;
 }
-.glow-dark {
-  filter: drop-shadow(0 0 12px #232a3d88) drop-shadow(0 0 24px #232a3d66);
+#pinpon-cursor.hovered .extincteur-svg,
+#pinpon-cursor .extincteur-icon.hovered {
+  filter: drop-shadow(0 0 22px #ffe066) drop-shadow(0 0 40px #e53935);
 }
-.glow-blue {
-  filter: drop-shadow(0 0 12px #1da1f2cc) drop-shadow(0 0 24px #1da1f288);
+#pinpon-cursor.clicked .extincteur-svg,
+#pinpon-cursor .extincteur-icon.spraying {
+  filter: drop-shadow(0 0 32px #b3e0ff) drop-shadow(0 0 40px #e53935);
+  transform: scale(0.92) rotate(-7deg);
 }
-#cursor.clicked {
-  transform: scale(0.92);
-  transition: transform 0.08s;
-}
-#cursor.hovered {
-  filter: brightness(1.2) drop-shadow(0 0 8px var(--accent-red));
+@media (pointer: fine) {
+  #pinpon-cursor { display: block; }
 }
 </style>
